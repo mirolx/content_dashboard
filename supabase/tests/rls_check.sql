@@ -31,6 +31,20 @@ select set_config('request.jwt.claims',
 insert into public.checklist_items (workspace_id, content, position)
   values (current_setting('test.a_ws')::uuid, 'A secret', 1);
 
+-- 양성 대조: A는 방금 넣은 체크리스트 행을 정확히 1개 보고, 수정할 수 있어야 한다
+do $$
+declare
+  n int;
+begin
+  if (select count(*) from public.checklist_items) <> 1 then
+    raise exception 'FAIL: A cannot see exactly its own 1 checklist row';
+  end if;
+
+  update public.checklist_items set content = 'A edited';
+  get diagnostics n = row_count;
+  if n <> 1 then raise exception 'FAIL: A could not update its own checklist row'; end if;
+end $$;
+
 -- 사용자 B로 전환
 select set_config('request.jwt.claims',
   '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated"}', true);
@@ -39,7 +53,7 @@ do $$
 declare
   n int;
 begin
-  if exists (select 1 from public.checklist_items) then
+  if exists (select 1 from public.checklist_items where content = 'A edited') then
     raise exception 'FAIL: B can read A checklist';
   end if;
   if (select count(*) from public.workspaces) <> 2 then
@@ -58,6 +72,28 @@ begin
     insert into public.checklist_items (workspace_id, content, position)
       values (current_setting('test.a_ws')::uuid, 'intrusion', 1);
     raise exception 'FAIL: B inserted into A workspace';
+  exception when insufficient_privilege then
+    null; -- 기대한 RLS 거부
+  end;
+end $$;
+
+-- B의 update WITH CHECK 검증: B가 자신의 행을 A의 워크스페이스로 옮길 수 없어야 한다
+do $$
+declare
+  b_ws uuid;
+  b_item uuid;
+begin
+  select id into b_ws from public.workspaces where platform = 'youtube';
+
+  insert into public.checklist_items (workspace_id, content, position)
+    values (b_ws, 'B item', 1)
+    returning id into b_item;
+
+  begin
+    update public.checklist_items
+      set workspace_id = current_setting('test.a_ws')::uuid
+      where id = b_item;
+    raise exception 'FAIL: B moved a row into A workspace';
   exception when insufficient_privilege then
     null; -- 기대한 RLS 거부
   end;

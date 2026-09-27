@@ -129,7 +129,11 @@ create policy "workspaces: update own" on public.workspaces
   using (user_id = (select auth.uid()))
   with check (user_id = (select auth.uid()));
 
-grant select, update on public.workspaces to authenticated;
+-- Supabase가 anon/authenticated에 기본으로 부여하는 테이블 권한을 먼저 걷어낸 뒤,
+-- name/memo만 수정 가능하도록 컬럼 단위로 다시 부여한다 (platform/user_id 등은 UPDATE로 바꿀 수 없음).
+revoke all on public.workspaces from anon, authenticated;
+grant select on public.workspaces to authenticated;
+grant update (name, memo) on public.workspaces to authenticated;
 
 do $$
 declare

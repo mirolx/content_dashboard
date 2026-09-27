@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { WidgetCard } from '@/components/WidgetCard'
 import { ChecklistWidget } from '@/features/checklist/ChecklistWidget'
+import { ScheduleWidget } from '@/features/schedule/ScheduleWidget'
 import { loadDashboard } from '@/lib/dashboard'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
 import { isPlatform } from '@/lib/types'
@@ -29,7 +30,7 @@ export default async function DashboardPage({
         {/* ── 오늘 할 일 ── */}
         <h2 className="text-lg font-semibold md:col-span-12">{t('dashboard.today')}</h2>
         <div className="md:col-span-7">
-          <WidgetCard title={t('schedule.title')}>{null}</WidgetCard>
+          <ScheduleWidget initial={data.schedule} />
         </div>
         <div className="md:col-span-5">
           <ChecklistWidget initial={data.checklist} />

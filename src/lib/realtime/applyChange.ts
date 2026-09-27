@@ -34,14 +34,46 @@ export function applyChange<T extends Row>(
   return compare ? [...next].sort(compare) : next
 }
 
-/** event를 되돌리는 변경. 낙관적 업데이트 실패 시 롤백에 쓴다. */
-export function inverseOf<T extends Row>(list: T[], event: ChangeEvent<T>): ChangeEvent<T> | null {
-  if (event.type === 'DELETE') {
-    const prev = list.find((r) => r.id === event.id)
-    return prev ? { type: 'INSERT', row: prev } : null
+/**
+ * 낙관적으로 반영한 event가 서버 write 실패로 되돌려야 할 때 쓴다.
+ * event.row 전체가 아니라, event가 실제로 바꾼 필드만 되돌린다 — 그 사이
+ * 다른 mutate나 실시간 변경이 같은 행의 다른 필드를 바꿨다면 그 값은 보존한다.
+ */
+export function rollbackChange<T extends Row>(
+  list: T[],
+  event: ChangeEvent<T>,
+  before: T | undefined,
+  compare?: (a: T, b: T) => number,
+): T[] {
+  const id = event.type === 'DELETE' ? event.id : event.row.id
+  let next: T[]
+
+  if (event.type === 'INSERT') {
+    // 낙관적으로 추가한 행을 제거한다. 이미 없으면 그대로 둔다.
+    if (!list.some((r) => r.id === id)) return list
+    next = list.filter((r) => r.id !== id)
+  } else if (event.type === 'DELETE') {
+    // before가 있고 아직 목록에 돌아오지 않았을 때만 다시 넣는다(중복 방지).
+    if (before === undefined || list.some((r) => r.id === id)) return list
+    next = [...list, before]
+  } else {
+    const current = list.find((r) => r.id === id)
+    if (before === undefined || current === undefined) return list
+    // event가 바꾼 필드 중, 현재 값이 그 patch 값과 여전히 같은 것만 되돌린다.
+    const patched: T = { ...current }
+    let changed = false
+    for (const key of Object.keys(event.row) as (keyof T)[]) {
+      if (event.row[key] === before[key]) continue
+      if (current[key] === event.row[key]) {
+        patched[key] = before[key]
+        changed = true
+      }
+    }
+    if (!changed) return list
+    next = list.map((r) => (r.id === id ? patched : r))
   }
-  const prev = list.find((r) => r.id === event.row.id)
-  return prev ? { type: 'UPDATE', row: prev } : { type: 'DELETE', id: event.row.id }
+
+  return compare ? [...next].sort(compare) : next
 }
 
 export function toChangeEvent(payload: RealtimePayload): ChangeEvent<Row> | null {

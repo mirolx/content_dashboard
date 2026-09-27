@@ -48,7 +48,9 @@ export function WorkspaceRealtime({
         if (event) handlers.current.get(table)?.forEach((handle) => handle(event))
       }
 
-    const channel = supabase.channel(`workspace:${workspaceId}`)
+    // 마운트마다 고유한 topic을 써서, 아직 leave 중인 이전 채널(예: 빠른 재마운트)과
+    // 같은 이름을 재사용해 구독이 뒤섞이는 일을 막는다.
+    const channel = supabase.channel(`workspace:${workspaceId}:${crypto.randomUUID()}`)
     const filter = `workspace_id=eq.${workspaceId}`
     for (const table of WORKSPACE_TABLES) {
       channel

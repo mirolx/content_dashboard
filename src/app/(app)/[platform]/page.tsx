@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { WidgetCard } from '@/components/WidgetCard'
 import { ChecklistWidget } from '@/features/checklist/ChecklistWidget'
 import { KanbanWidget } from '@/features/kanban/KanbanWidget'
+import { MemoWidget } from '@/features/memo/MemoWidget'
 import { ScheduleWidget } from '@/features/schedule/ScheduleWidget'
 import { loadDashboard } from '@/lib/dashboard'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
@@ -57,7 +58,7 @@ export default async function DashboardPage({
           <WidgetCard title={t('hashtags.title')}>{null}</WidgetCard>
         </div>
         <div className={isYouTube ? 'md:col-span-8' : 'md:col-span-4'}>
-          <WidgetCard title={t('memo.title')}>{null}</WidgetCard>
+          <MemoWidget initialMemo={workspace.memo} />
         </div>
         <div className="md:col-span-4">
           <WidgetCard title={t('performance.title')}>

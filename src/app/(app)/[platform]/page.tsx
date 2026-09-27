@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { WidgetCard } from '@/components/WidgetCard'
 import { ChecklistWidget } from '@/features/checklist/ChecklistWidget'
+import { KanbanWidget } from '@/features/kanban/KanbanWidget'
 import { ScheduleWidget } from '@/features/schedule/ScheduleWidget'
 import { loadDashboard } from '@/lib/dashboard'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
@@ -36,7 +37,7 @@ export default async function DashboardPage({
           <ChecklistWidget initial={data.checklist} />
         </div>
         <div className="md:col-span-12">
-          <WidgetCard title={t('kanban.title')}>{null}</WidgetCard>
+          <KanbanWidget initial={data.kanban} />
         </div>
 
         {/* ── 탐색 · 영감 ── */}

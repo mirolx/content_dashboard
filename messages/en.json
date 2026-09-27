@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "title": "Creator Dashboard",
+    "description": "All-in-one dashboard for YouTube and Instagram creators"
+  },
+  "common": {
+    "add": "Add",
+    "delete": "Delete",
+    "done": "Done",
+    "saveFailed": "Couldn't save. Please try again.",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "moveLeft": "Previous stage",
+    "moveRight": "Next stage",
+    "loadFailed": "Couldn't load the dashboard.",
+    "retry": "Try again"
+  },
+  "auth": {
+    "title": "Creator Dashboard",
+    "loginTab": "Log in",
+    "signupTab": "Sign up",
+    "email": "Email",
+    "password": "Password (6+ characters)",
+    "submitLogin": "Log in",
+    "submitSignup": "Create account",
+    "or": "or",
+    "google": "Continue with Google",
+    "checkEmail": "We sent you a confirmation email. Click the link to finish signing up.",
+    "errors": {
+      "invalidInput": "Check your email and password (6+ characters).",
+      "invalidCredentials": "Incorrect email or password.",
+      "emailNotConfirmed": "Please confirm your email first.",
+      "userExists": "This email is already registered.",
+      "weakPassword": "That password is too weak.",
+      "callback": "Couldn't finish signing in. Please try again.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "nav": {
+    "youtube": "YouTube",
+    "instagram": "Instagram",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "dashboard": {
+    "today": "Today",
+    "explore": "Explore & inspiration"
+  },
+  "schedule": {
+    "title": "Upload schedule",
+    "titleLabel": "Title",
+    "kindLabel": "Type",
+    "whenLabel": "Date and time",
+    "empty": "Nothing scheduled.",
+    "kinds": {
+      "shoot": "Shoot",
+      "edit": "Edit",
+      "upload": "Upload"
+    }
+  },
+  "checklist": {
+    "title": "Shooting checklist",
+    "itemLabel": "Checklist item",
+    "empty": "Your checklist is empty."
+  },
+  "kanban": {
+    "title": "Editing progress",
+    "cardLabel": "Video title",
+    "emptyColumn": "None",
+    "statuses": {
+      "shot": "Shot",
+      "editing": "Editing",
+      "review": "In review",
+      "uploaded": "Uploaded"
+    }
+  },
+  "trends": {
+    "title": "Today's trending topics",
+    "loading": "Loading trends…",
+    "empty": "No videos to recommend today.",
+    "noKeywords": "You have no trend keywords.",
+    "goToSettings": "Add some in Settings",
+    "failed": "Couldn't load trends.",
+    "showingFrom": "Showing topics from {date}.",
+    "views": "{count, number} views",
+    "pin": "Pin",
+    "pinned": "Pinned"
+  },
+  "ideas": {
+    "title": "Pinned ideas",
+    "titleLabel": "Idea",
+    "noteLabel": "Note (optional)",
+    "empty": "No pinned ideas yet.",
+    "source": "View source"
+  },
+  "references": {
+    "title": "Recent references",
+    "kindLabel": "Type",
+    "titleLabel": "Title",
+    "urlLabel": "Link (optional)",
+    "imageUrlLabel": "Image URL (optional)",
+    "noteLabel": "Note (optional)",
+    "empty": "No saved references.",
+    "open": "Open",
+    "invalidUrl": "Links must start with http:// or https://.",
+    "kinds": {
+      "thumbnail": "Thumbnail",
+      "topic": "Topic",
+      "sound": "Sound effect",
+      "font": "Font",
+      "other": "Other"
+    }
+  },
+  "hashtags": {
+    "title": "Hashtag bank",
+    "tagLabel": "Hashtag",
+    "groupLabel": "Group (optional)",
+    "empty": "No saved hashtags.",
+    "ungrouped": "Ungrouped",
+    "duplicate": "That hashtag already exists."
+  },
+  "memo": {
+    "title": "Quick notes",
+    "label": "Quick notes",
+    "placeholder": "Jot down whatever comes to mind."
+  },
+  "performance": {
+    "title": "Performance snapshot",
+    "comingSoon": "Performance analytics is coming soon."
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "language": "Language",
+    "workspace": "Workspace",
+    "workspaceName": "Workspace name",
+    "trendKeywords": "Trend search keywords",
+    "keywordLabel": "Keyword",
+    "keywordsHelp": "We use these keywords to find the most-viewed English YouTube videos from the last 7 days.",
+    "keywordsEmpty": "No keywords yet.",
+    "keywordDuplicate": "That keyword already exists.",
+    "refetch": "Fetch today's trends again",
+    "refetchDone": "Fetched today's trends.",
+    "refetchFailed": "Couldn't fetch trends."
+  }
+}

@@ -1,0 +1,10 @@
+import { cache } from 'react'
+import { createClient } from '@/lib/supabase/server'
+import type { Platform, Workspace } from '@/lib/types'
+
+/** 현재 사용자의 해당 플랫폼 워크스페이스. RLS 덕분에 본인 것만 조회된다. */
+export const getWorkspace = cache(async (platform: Platform): Promise<Workspace | null> => {
+  const supabase = await createClient()
+  const { data } = await supabase.from('workspaces').select('*').eq('platform', platform).maybeSingle()
+  return data as Workspace | null
+})

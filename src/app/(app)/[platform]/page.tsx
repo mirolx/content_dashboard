@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { WidgetCard } from '@/components/WidgetCard'
+import { ChecklistWidget } from '@/features/checklist/ChecklistWidget'
 import { loadDashboard } from '@/lib/dashboard'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
 import { isPlatform } from '@/lib/types'
@@ -31,7 +32,7 @@ export default async function DashboardPage({
           <WidgetCard title={t('schedule.title')}>{null}</WidgetCard>
         </div>
         <div className="md:col-span-5">
-          <WidgetCard title={t('checklist.title')}>{null}</WidgetCard>
+          <ChecklistWidget initial={data.checklist} />
         </div>
         <div className="md:col-span-12">
           <WidgetCard title={t('kanban.title')}>{null}</WidgetCard>

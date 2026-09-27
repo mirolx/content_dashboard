@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { requireUser } from '@/lib/auth/requireUser'
 import { createClient } from '@/lib/supabase/server'
 import type { ActionResult } from '@/lib/types'
 
@@ -14,6 +15,7 @@ export async function renameWorkspace(id: string, name: string): Promise<ActionR
   const parsed = renameInput.safeParse({ id, name })
   if (!parsed.success) return { error: 'invalid' }
 
+  await requireUser()
   const supabase = await createClient()
   const { error } = await supabase
     .from('workspaces')

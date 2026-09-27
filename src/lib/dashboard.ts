@@ -1,3 +1,4 @@
+import { requireUser } from '@/lib/auth/requireUser'
 import { createClient } from '@/lib/supabase/server'
 import type {
   ChecklistItem,
@@ -19,6 +20,7 @@ export type DashboardData = {
 }
 
 export async function loadDashboard(workspaceId: string): Promise<DashboardData> {
+  await requireUser()
   const supabase = await createClient()
 
   async function list<T>(table: WorkspaceTable): Promise<T[]> {

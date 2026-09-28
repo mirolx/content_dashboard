@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
 import { WidgetCard } from '@/components/WidgetCard'
+import { newId } from '@/lib/id'
 import { positionAfter } from '@/lib/position'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
@@ -28,7 +29,7 @@ export function KanbanWidget({ initial }: { initial: KanbanCard[] }) {
     const parsed = textSchema.safeParse(title)
     if (!parsed.success) return
     const row: KanbanCard = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       title: parsed.data,
       status: 'shot',

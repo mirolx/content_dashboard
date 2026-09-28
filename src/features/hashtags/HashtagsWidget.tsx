@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { WidgetCard } from '@/components/WidgetCard'
+import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import type { Hashtag } from '@/lib/types'
@@ -30,7 +31,7 @@ export function HashtagsWidget({ initial }: { initial: Hashtag[] }) {
     }
     setDuplicate(false)
     const row: Hashtag = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       tag: normalized,
       group_name: group.trim() || null,

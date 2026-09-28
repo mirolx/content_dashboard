@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { useFormatter, useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
 import { WidgetCard } from '@/components/WidgetCard'
+import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import { SCHEDULE_KINDS, type ScheduleItem, type ScheduleKind } from '@/lib/types'
@@ -29,7 +30,7 @@ export function ScheduleWidget({ initial }: { initial: ScheduleItem[] }) {
     const parsed = textSchema.safeParse(title)
     if (!parsed.success || !when) return
     const row: ScheduleItem = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       title: parsed.data,
       kind,

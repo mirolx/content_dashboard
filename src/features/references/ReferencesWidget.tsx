@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
 import { WidgetCard } from '@/components/WidgetCard'
+import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import { REFERENCE_KINDS, type ReferenceItem, type ReferenceKind } from '@/lib/types'
@@ -37,7 +38,7 @@ export function ReferencesWidget({ initial }: { initial: ReferenceItem[] }) {
     }
     setInvalidUrl(false)
     const row: ReferenceItem = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       kind,
       title: parsedTitle.data,

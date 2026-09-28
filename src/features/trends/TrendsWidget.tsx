@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { WidgetCard } from '@/components/WidgetCard'
 import { ideasData } from '@/features/ideas/data'
+import { newId } from '@/lib/id'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import type { TrendsResult } from '@/lib/trends/getTodayTrends'
 import type { PinnedIdea, TrendTopic } from '@/lib/types'
@@ -28,7 +29,7 @@ export function TrendsWidget({
     setPinned((prev) => new Set(prev).add(url))
     setPinFailed(false)
     const row: PinnedIdea = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       title: topic.title,
       note: topic.channel_title,

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
 import { WidgetCard } from '@/components/WidgetCard'
+import { newId } from '@/lib/id'
 import { positionAfter, positionBetween } from '@/lib/position'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
@@ -25,7 +26,7 @@ export function ChecklistWidget({ initial }: { initial: ChecklistItem[] }) {
     const parsed = textSchema.safeParse(content)
     if (!parsed.success) return
     const row: ChecklistItem = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       content: parsed.data,
       is_done: false,

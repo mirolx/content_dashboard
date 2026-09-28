@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
 import { WidgetCard } from '@/components/WidgetCard'
+import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import type { PinnedIdea } from '@/lib/types'
@@ -26,7 +27,7 @@ export function PinnedIdeasWidget({ initial }: { initial: PinnedIdea[] }) {
     const parsed = textSchema.safeParse(title)
     if (!parsed.success) return
     const row: PinnedIdea = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       title: parsed.data,
       note: note.trim(),

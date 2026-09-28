@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
+import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import type { TrendKeyword } from '@/lib/types'
@@ -30,7 +31,7 @@ export function KeywordSettings({ initial }: { initial: TrendKeyword[] }) {
     }
     setDuplicate(false)
     const row: TrendKeyword = {
-      id: crypto.randomUUID(),
+      id: newId(),
       workspace_id: workspaceId,
       keyword: value,
       created_at: new Date().toISOString(),

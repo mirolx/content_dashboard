@@ -5,6 +5,7 @@ import { ChecklistWidget } from '@/features/checklist/ChecklistWidget'
 import { HashtagsWidget } from '@/features/hashtags/HashtagsWidget'
 import { KanbanWidget } from '@/features/kanban/KanbanWidget'
 import { MemoWidget } from '@/features/memo/MemoWidget'
+import { PinnedIdeasWidget } from '@/features/ideas/PinnedIdeasWidget'
 import { ReferencesWidget } from '@/features/references/ReferencesWidget'
 import { ScheduleWidget } from '@/features/schedule/ScheduleWidget'
 import { loadDashboard } from '@/lib/dashboard'
@@ -51,7 +52,7 @@ export default async function DashboardPage({
           </div>
         )}
         <div className={isYouTube ? 'md:col-span-4' : 'md:col-span-6'}>
-          <WidgetCard title={t('ideas.title')}>{null}</WidgetCard>
+          <PinnedIdeasWidget initial={data.ideas} />
         </div>
         <div className="md:col-span-6">
           <ReferencesWidget initial={data.references} />

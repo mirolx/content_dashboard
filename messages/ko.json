@@ -138,7 +138,7 @@
     "workspaceName": "워크스페이스 이름",
     "trendKeywords": "트렌드 검색 키워드",
     "keywordLabel": "키워드",
-    "keywordsHelp": "영어권 YouTube에서 최근 7일간 조회수가 높은 영상을 이 키워드로 찾아요.",
+    "keywordsHelp": "영어권 YouTube에서 최근 7일간 조회수가 높은 영상을 이 키워드로 찾아요. 한 번 조회할 때 최대 5개 키워드까지 사용해요.",
     "keywordsEmpty": "키워드가 없어요.",
     "keywordDuplicate": "이미 있는 키워드예요.",
     "refetch": "오늘 트렌드 다시 가져오기",

@@ -138,7 +138,7 @@
     "workspaceName": "Workspace name",
     "trendKeywords": "Trend search keywords",
     "keywordLabel": "Keyword",
-    "keywordsHelp": "We use these keywords to find the most-viewed English YouTube videos from the last 7 days.",
+    "keywordsHelp": "We use these keywords to find the most-viewed English YouTube videos from the last 7 days. Up to 5 keywords are used.",
     "keywordsEmpty": "No keywords yet.",
     "keywordDuplicate": "That keyword already exists.",
     "refetch": "Fetch today's trends again",

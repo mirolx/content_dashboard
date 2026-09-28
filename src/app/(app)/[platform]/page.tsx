@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 import { WidgetCard } from '@/components/WidgetCard'
@@ -8,6 +9,7 @@ import { MemoWidget } from '@/features/memo/MemoWidget'
 import { PinnedIdeasWidget } from '@/features/ideas/PinnedIdeasWidget'
 import { ReferencesWidget } from '@/features/references/ReferencesWidget'
 import { ScheduleWidget } from '@/features/schedule/ScheduleWidget'
+import { TrendsSection } from '@/features/trends/TrendsSection'
 import { loadDashboard } from '@/lib/dashboard'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
 import { isPlatform } from '@/lib/types'
@@ -48,7 +50,15 @@ export default async function DashboardPage({
         <h2 className="mt-4 text-lg font-semibold md:col-span-12">{t('dashboard.explore')}</h2>
         {isYouTube && (
           <div className="md:col-span-8">
-            <WidgetCard title={t('trends.title')}>{null}</WidgetCard>
+            <Suspense
+              fallback={
+                <WidgetCard title={t('trends.title')}>
+                  <p className="text-sm text-gray-500">{t('trends.loading')}</p>
+                </WidgetCard>
+              }
+            >
+              <TrendsSection workspaceId={workspace.id} />
+            </Suspense>
           </div>
         )}
         <div className={isYouTube ? 'md:col-span-4' : 'md:col-span-6'}>

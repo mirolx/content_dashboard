@@ -9,7 +9,7 @@
 
 | 항목 | 용도 |
 |---|---|
-| Node.js 20 이상 | 개발 서버 |
+| Node.js 22.12 이상 (권장 24) | 개발 서버 |
 | Supabase 프로젝트 (무료 플랜) | DB, 로그인, 실시간 동기화 |
 | Google Cloud 프로젝트 | YouTube Data API 키, 구글 로그인 |
 
@@ -30,7 +30,7 @@
 3. **APIs & Services → Credentials → Create credentials → API key**로 키를 만든다.
 4. 키 제한(API restrictions)을 "YouTube Data API v3"로 걸어 둔다.
 
-하루 무료 할당량은 10,000 units이고, 이 앱은 사용자당 하루 약 300 units를 쓴다. 결제 정보는 필요 없다.
+하루 무료 할당량은 10,000 units이고, 이 앱은 사용자당 하루 약 300 units를 쓴다 (트렌드 조회 한 번에 키워드는 최대 5개까지만 사용한다). 결제 정보는 필요 없다.
 
 ## 3. 구글 로그인 (선택)
 
@@ -49,6 +49,19 @@ npm run dev
 ```
 
 http://localhost:3000 → 회원가입 → YouTube 대시보드.
+
+## 폰에서 테스트하기
+
+1. PC와 폰을 같은 Wi-Fi에 연결한다.
+2. PC에서 개발 서버를 모든 네트워크 인터페이스에 열어 실행한다.
+   ```bash
+   npm run dev -- -H 0.0.0.0
+   ```
+3. PC의 내부 IP를 확인한다 (Windows: `ipconfig`, macOS/Linux: `ifconfig`).
+4. 폰 브라우저에서 `http://<PC의 내부 IP>:3000` 으로 접속한다.
+5. Supabase **Authentication → URL Configuration → Redirect URLs**에 `http://<PC의 내부 IP>:3000/auth/callback` 을 추가한다.
+6. 설치된 Next.js 버전이 dev 서버의 cross-origin 요청을 막는다면(`node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/allowedDevOrigins.md` 참고), `next.config.ts`의 `allowedDevOrigins`에 그 IP를 추가한다 — 예시는 주석으로 남겨 두었다.
+7. 이메일 확인 링크는 Site URL(즉 `http://localhost:3000`)을 가리킨다. 그래서 **회원가입과 이메일 확인은 PC에서** 먼저 하고, 폰에서는 이미 만들어진 계정으로 **로그인만** 한다.
 
 ## 명령어
 

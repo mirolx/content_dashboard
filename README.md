@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 크리에이터 대시보드
 
-## Getting Started
+유튜브·인스타그램 크리에이터를 위한 올인원 대시보드 (기능 뼈대 단계).
 
-First, run the development server:
+- 설계: `docs/superpowers/specs/2026-09-28-creator-dashboard-foundation-design.md`
+- 구현 계획: `docs/superpowers/plans/2026-09-28-creator-dashboard-foundation.md`
+
+## 준비물 (모두 무료)
+
+| 항목 | 용도 |
+|---|---|
+| Node.js 20 이상 | 개발 서버 |
+| Supabase 프로젝트 (무료 플랜) | DB, 로그인, 실시간 동기화 |
+| Google Cloud 프로젝트 | YouTube Data API 키, 구글 로그인 |
+
+## 1. Supabase 설정
+
+1. [supabase.com](https://supabase.com)에서 새 프로젝트를 만든다.
+2. **SQL Editor**에서 `supabase/migrations/0001_init.sql` 전체를 붙여넣고 실행한다.
+3. 이어서 `supabase/tests/rls_check.sql`을 실행해 결과가 `RLS OK`인지 확인한다.
+4. **Authentication → URL Configuration**
+   - Site URL: `http://localhost:3000`
+   - Redirect URLs에 `http://localhost:3000/auth/callback` 추가
+5. **Project Settings → API**에서 Project URL과 anon(public) key를 복사해 둔다.
+
+## 2. YouTube Data API 키
+
+1. [Google Cloud Console](https://console.cloud.google.com/)에서 프로젝트를 만든다.
+2. **APIs & Services → Library**에서 "YouTube Data API v3"를 사용 설정한다.
+3. **APIs & Services → Credentials → Create credentials → API key**로 키를 만든다.
+4. 키 제한(API restrictions)을 "YouTube Data API v3"로 걸어 둔다.
+
+하루 무료 할당량은 10,000 units이고, 이 앱은 사용자당 하루 약 300 units를 쓴다. 결제 정보는 필요 없다.
+
+## 3. 구글 로그인 (선택)
+
+1. Google Cloud Console → **APIs & Services → OAuth consent screen**을 설정한다 (External, 테스트 사용자에 본인 이메일 추가).
+2. **Credentials → Create credentials → OAuth client ID** → Web application
+   - Authorized redirect URIs: `https://<프로젝트-ref>.supabase.co/auth/v1/callback`
+     (Supabase의 Authentication → Sign In / Providers → Google 화면에 정확한 주소가 표시된다)
+3. 발급된 Client ID와 Client Secret을 Supabase의 Google provider에 입력하고 활성화한다.
+
+## 4. 실행
 
 ```bash
+cp .env.example .env.local   # 값 세 개를 채운다
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 → 회원가입 → YouTube 대시보드.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 명령어
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| 명령 | 설명 |
+|---|---|
+| `npm run dev` | 개발 서버 |
+| `npm test` | 단위 테스트 (Vitest) |
+| `npm run typecheck` | 타입 체크 |
+| `npm run lint` | ESLint |

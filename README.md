@@ -60,7 +60,7 @@ http://localhost:3000 → 회원가입 → YouTube 대시보드.
 3. PC의 내부 IP를 확인한다 (Windows: `ipconfig`, macOS/Linux: `ifconfig`).
 4. 폰 브라우저에서 `http://<PC의 내부 IP>:3000` 으로 접속한다.
 5. Supabase **Authentication → URL Configuration → Redirect URLs**에 `http://<PC의 내부 IP>:3000/auth/callback` 을 추가한다.
-6. 설치된 Next.js 버전이 dev 서버의 cross-origin 요청을 막는다면(`node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/allowedDevOrigins.md` 참고), `next.config.ts`의 `allowedDevOrigins`에 그 IP를 추가한다 — 예시는 주석으로 남겨 두었다.
+6. `next.config.ts`의 `allowedDevOrigins` 주석을 풀고 **PC의 내부 IP**를 넣는다. Next.js 16 개발 서버는 localhost가 아닌 주소의 개발용 요청(HMR 등)을 막기 때문이다. 이 변경은 커밋하지 않아도 된다.
 7. 이메일 확인 링크는 Site URL(즉 `http://localhost:3000`)을 가리킨다. 그래서 **회원가입과 이메일 확인은 PC에서** 먼저 하고, 폰에서는 이미 만들어진 계정으로 **로그인만** 한다.
 
 ## 명령어

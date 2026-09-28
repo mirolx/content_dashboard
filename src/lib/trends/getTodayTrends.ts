@@ -53,6 +53,7 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
     .from('trend_keywords')
     .select('keyword')
     .eq('workspace_id', workspaceId)
+    .order('created_at')
   if (keywordError) return fallback()
   const keywords = (keywordRows ?? []).map((r) => r.keyword as string)
   if (keywords.length === 0) return { status: 'no-keywords' }

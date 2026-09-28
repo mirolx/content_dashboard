@@ -7,6 +7,7 @@ import type { Platform, Workspace } from '@/lib/types'
 export const getWorkspace = cache(async (platform: Platform): Promise<Workspace | null> => {
   await requireUser()
   const supabase = await createClient()
-  const { data } = await supabase.from('workspaces').select('*').eq('platform', platform).maybeSingle()
+  const { data, error } = await supabase.from('workspaces').select('*').eq('platform', platform).maybeSingle()
+  if (error) throw new Error(`workspaces: ${error.message}`)
   return data as Workspace | null
 })

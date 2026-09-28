@@ -49,10 +49,19 @@ export function MemoWidget({ initialMemo }: { initialMemo: string }) {
         value={memo}
         rows={6}
         onChange={(e) => {
+          // Set the ref synchronously so a remote UPDATE arriving between this
+          // keystroke and the next effect flush can't clobber what was just typed.
+          protectedRef.current = true
           setMemo(e.target.value)
           schedule(e.target.value)
         }}
-        onFocus={() => setFocused(true)}
+        onFocus={() => {
+          // Set the ref synchronously so a remote UPDATE arriving between this
+          // focus event and the next effect flush can't clobber the memo while
+          // the user is about to type.
+          protectedRef.current = true
+          setFocused(true)
+        }}
         onBlur={() => {
           setFocused(false)
           void flush()

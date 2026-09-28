@@ -3,8 +3,10 @@ import { getTranslations } from 'next-intl/server'
 import { WidgetCard } from '@/components/WidgetCard'
 import { LanguageToggle } from '@/features/settings/LanguageToggle'
 import { WorkspaceNameForm } from '@/features/settings/WorkspaceNameForm'
+import { KeywordSettings } from '@/features/trends/KeywordSettings'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
-import { isPlatform } from '@/lib/types'
+import { createClient } from '@/lib/supabase/server'
+import { isPlatform, type TrendKeyword } from '@/lib/types'
 import { getWorkspace } from '@/lib/workspace'
 
 export default async function SettingsPage({
@@ -18,6 +20,16 @@ export default async function SettingsPage({
   if (!workspace) notFound()
   const t = await getTranslations('settings')
 
+  let keywords: TrendKeyword[] = []
+  if (platform === 'youtube') {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from('trend_keywords')
+      .select('*')
+      .eq('workspace_id', workspace.id)
+    keywords = (data ?? []) as TrendKeyword[]
+  }
+
   return (
     <WorkspaceRealtime key={workspace.id} workspaceId={workspace.id}>
       <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -28,6 +40,11 @@ export default async function SettingsPage({
         <WidgetCard title={t('workspace')}>
           <WorkspaceNameForm workspaceId={workspace.id} name={workspace.name} />
         </WidgetCard>
+        {platform === 'youtube' && (
+          <WidgetCard title={t('trendKeywords')}>
+            <KeywordSettings initial={keywords} />
+          </WidgetCard>
+        )}
       </div>
     </WorkspaceRealtime>
   )

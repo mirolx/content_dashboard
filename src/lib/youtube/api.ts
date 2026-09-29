@@ -88,6 +88,3 @@ export async function fetchVideoDetails(
   }
   return details
 }
-
-export const byViewsDesc = (a: { viewCount: number }, b: { viewCount: number }) =>
-  b.viewCount - a.viewCount

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { byViewsDesc, fetchVideoDetails, YouTubeApiError } from './api'
+import { fetchVideoDetails, YouTubeApiError } from './api'
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
@@ -81,12 +81,5 @@ describe('fetchVideoDetails', () => {
     await expect(fetchVideoDetails('k', ['a'], fetchImpl as unknown as typeof fetch)).rejects.toBeInstanceOf(
       YouTubeApiError,
     )
-  })
-})
-
-describe('byViewsDesc', () => {
-  it('sorts by view count, highest first', () => {
-    const list = [{ viewCount: 1 }, { viewCount: 3 }, { viewCount: 2 }]
-    expect(list.sort(byViewsDesc).map((v) => v.viewCount)).toEqual([3, 2, 1])
   })
 })

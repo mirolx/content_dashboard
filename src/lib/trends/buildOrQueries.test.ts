@@ -20,6 +20,10 @@ describe('buildOrQueries', () => {
     expect(buildOrQueries([k('x', null), k('y', null)])).toEqual(['"x"|"y"'])
   })
 
+  it('strips | and " from stored keywords before quoting', () => {
+    expect(buildOrQueries([k('say "hi"|x', 'g')])).toEqual(['"say hi x"'])
+  })
+
   it('returns [] for no keywords', () => {
     expect(buildOrQueries([])).toEqual([])
   })

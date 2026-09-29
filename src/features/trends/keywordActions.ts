@@ -25,7 +25,7 @@ export async function addKeywords(
 
   const parsed = parseKeywordList(text)
   if (parsed.length === 0) return { error: 'invalid' }
-  const group = groupName.trim().replace(/\s+/g, ' ').slice(0, MAX_GROUP_LENGTH) || null
+  const group = groupName.trim().replace(/\s+/g, ' ').slice(0, MAX_GROUP_LENGTH).trim() || null
 
   const supabase = await createClient()
   const { data: existingRows, error: readError } = await supabase

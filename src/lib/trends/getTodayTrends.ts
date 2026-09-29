@@ -16,6 +16,8 @@ export type TrendsResult =
 /** 하루에 가장 오래 검색하지 않은 그룹 4개 × 그룹당 최대 4개 키워드 → OR 검색 최대 4번 ≈ 400 units. */
 const ROTATION_GROUPS = 4
 const KEYWORDS_PER_GROUP = 4
+/** 키워드 풀 조회 상한 (등록 제한과 같은 값). */
+const MAX_POOL = 100
 /** 서버 액션이 등록을 10개로 막지만, 직접 insert로 우회될 수 있어 조회에서도 제한한다. */
 const MAX_CHANNELS = 10
 
@@ -63,7 +65,8 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
       .from('trend_keywords')
       .select('id, keyword, group_name, last_searched_on, created_at')
       .eq('workspace_id', workspaceId)
-      .order('created_at'),
+      .order('created_at')
+      .limit(MAX_POOL),
     supabase
       .from('benchmark_channels')
       .select('uploads_playlist_id')

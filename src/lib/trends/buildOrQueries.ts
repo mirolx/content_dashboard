@@ -8,7 +8,10 @@ export function buildOrQueries(
   perQuery = 4,
 ): string[] {
   const groups = new Map<string | null, string[]>()
-  for (const { keyword, group_name } of picked) {
+  for (const { keyword: raw, group_name } of picked) {
+    // 입력 정리 이전에 저장된 키워드에 남아 있을 수 있는 연산자 문자를 제거한다.
+    const keyword = raw.replace(/[|"]/g, ' ').replace(/\s+/g, ' ').trim()
+    if (!keyword) continue
     groups.set(group_name, [...(groups.get(group_name) ?? []), keyword])
   }
   const queries: string[] = []

@@ -13,6 +13,8 @@ export type TrendsResult =
 
 /** YouTube 할당량을 아끼기 위해 한 번의 조회에는 키워드를 최대 이 개수만큼만 쓴다. */
 const MAX_KEYWORDS = 5
+/** 서버 액션이 등록 개수를 제한하지만 직접 insert로 우회할 수 있으므로, 할당량을 쓰는 여기서도 채널 수를 제한한다. */
+const MAX_CHANNELS = 10
 
 /**
  * 오늘(한국 시간) 저장된 트렌드가 있으면 그대로, 없으면 벤치마킹 채널과 키워드로
@@ -57,7 +59,8 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
       .from('benchmark_channels')
       .select('uploads_playlist_id')
       .eq('workspace_id', workspaceId)
-      .order('created_at'),
+      .order('created_at')
+      .limit(MAX_CHANNELS),
   ])
   if (keywordRes.error || channelRes.error) return fallback()
   const keywords = (keywordRes.data ?? []).map((r) => r.keyword as string).slice(0, MAX_KEYWORDS)

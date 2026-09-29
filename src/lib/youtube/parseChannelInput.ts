@@ -1,7 +1,7 @@
 export type ChannelQuery = { handle: string } | { channelId: string }
 
 const CHANNEL_ID = /^UC[\w-]{22}$/
-const HANDLE = /^[\w.-]{3,30}$/
+const HANDLE = /^[\p{L}\p{N}_.-]{3,30}$/u
 
 /** "@handle", 채널 URL, "UC…" 채널 ID를 받아 조회 조건으로 바꾼다. 알아볼 수 없으면 null. */
 export function parseChannelInput(input: string): ChannelQuery | null {
@@ -23,7 +23,12 @@ export function parseChannelInput(input: string): ChannelQuery | null {
 
   const [first, second] = url.pathname.split('/').filter(Boolean)
   if (first?.startsWith('@')) {
-    const handle = decodeURIComponent(first.slice(1))
+    let handle: string
+    try {
+      handle = decodeURIComponent(first.slice(1))
+    } catch {
+      return null
+    }
     return HANDLE.test(handle) ? { handle } : null
   }
   if (first === 'channel' && second && CHANNEL_ID.test(second)) return { channelId: second }

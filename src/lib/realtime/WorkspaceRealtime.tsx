@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { newId } from '@/lib/id'
 import { createClient } from '@/lib/supabase/client'
 import { WORKSPACE_TABLES, type LiveTable } from '@/lib/types'
@@ -49,32 +49,47 @@ export function WorkspaceRealtime({
         if (event) handlers.current.get(table)?.forEach((handle) => handle(event))
       }
 
-    // 마운트마다 고유한 topic을 써서, 아직 leave 중인 이전 채널(예: 빠른 재마운트)과
-    // 같은 이름을 재사용해 구독이 뒤섞이는 일을 막는다.
-    const channel = supabase.channel(`workspace:${workspaceId}:${newId()}`)
-    const filter = `workspace_id=eq.${workspaceId}`
-    for (const table of WORKSPACE_TABLES) {
-      channel
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table, filter }, dispatch(table))
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table, filter }, dispatch(table))
-        // DELETE 이벤트에는 필터가 적용되지 않는다. 목록에 없는 id는 applyChange가 무시한다.
-        .on('postgres_changes', { event: 'DELETE', schema: 'public', table }, dispatch(table))
-    }
-    channel.on(
-      'postgres_changes',
-      { event: 'UPDATE', schema: 'public', table: 'workspaces', filter: `id=eq.${workspaceId}` },
-      dispatch('workspaces'),
-    )
+    let channel: RealtimeChannel | null = null
+    let cancelled = false
 
-    let connectedOnce = false
-    channel.subscribe((status) => {
-      if (status !== 'SUBSCRIBED') return
-      if (connectedOnce) setResyncKey((k) => k + 1)
-      connectedOnce = true
-    })
+    // 로그인 토큰을 Realtime에 먼저 넣고 구독한다. 토큰 없이(anon으로) 접속하면 RLS 때문에
+    // 이벤트가 오지 않고, workspaces 구독은 "invalid column for filter id"로 거부된다.
+    void (async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      if (cancelled) return
+      await supabase.realtime.setAuth(session?.access_token ?? null)
+      if (cancelled) return
+
+      // 마운트마다 고유한 topic을 써서, 아직 leave 중인 이전 채널(예: 빠른 재마운트)과
+      // 같은 이름을 재사용해 구독이 뒤섞이는 일을 막는다.
+      channel = supabase.channel(`workspace:${workspaceId}:${newId()}`)
+      const filter = `workspace_id=eq.${workspaceId}`
+      for (const table of WORKSPACE_TABLES) {
+        channel
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table, filter }, dispatch(table))
+          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table, filter }, dispatch(table))
+          // DELETE 이벤트에는 필터가 적용되지 않는다. 목록에 없는 id는 applyChange가 무시한다.
+          .on('postgres_changes', { event: 'DELETE', schema: 'public', table }, dispatch(table))
+      }
+      channel.on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'workspaces', filter: `id=eq.${workspaceId}` },
+        dispatch('workspaces'),
+      )
+
+      let connectedOnce = false
+      channel.subscribe((status) => {
+        if (status !== 'SUBSCRIBED') return
+        if (connectedOnce) setResyncKey((k) => k + 1)
+        connectedOnce = true
+      })
+    })()
 
     return () => {
-      void supabase.removeChannel(channel)
+      cancelled = true
+      if (channel) void supabase.removeChannel(channel)
     }
   }, [workspaceId])
 

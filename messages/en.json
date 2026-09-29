@@ -61,7 +61,7 @@
     }
   },
   "checklist": {
-    "title": "Shooting checklist",
+    "title": "Checklist",
     "itemLabel": "Checklist item",
     "empty": "Your checklist is empty."
   },

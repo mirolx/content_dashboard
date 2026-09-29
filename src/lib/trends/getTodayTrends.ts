@@ -13,8 +13,9 @@ export type TrendsResult =
   | { status: 'no-sources' }
   | { status: 'failed'; fallback: TrendTopic[]; fetchedOn: string | null }
 
-/** 하루에 검색하는 키워드 수. 같은 그룹끼리 OR로 묶이므로 실제 검색 호출은 더 적다. */
-const ROTATION_SIZE = 10
+/** 하루에 가장 오래 검색하지 않은 그룹 4개 × 그룹당 최대 4개 키워드 → OR 검색 최대 4번 ≈ 400 units. */
+const ROTATION_GROUPS = 4
+const KEYWORDS_PER_GROUP = 4
 /** 서버 액션이 등록을 10개로 막지만, 직접 insert로 우회될 수 있어 조회에서도 제한한다. */
 const MAX_CHANNELS = 10
 
@@ -76,7 +77,7 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
   if (keywordRows.length === 0 && playlistIds.length === 0) return { status: 'no-sources' }
 
   const pool = keywordRows.map((k) => k.keyword)
-  const rotation = pickRotation(keywordRows, ROTATION_SIZE)
+  const rotation = pickRotation(keywordRows, { groups: ROTATION_GROUPS, perGroup: KEYWORDS_PER_GROUP })
   const queries = buildOrQueries(rotation)
 
   try {

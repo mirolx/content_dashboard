@@ -16,22 +16,22 @@ function byStaleness(a: RotationKeyword, b: RotationKeyword) {
   return a.created_at < b.created_at ? -1 : a.created_at > b.created_at ? 1 : 0
 }
 
-/** 그룹을 가나다순(그룹 없음은 마지막)으로 돌며 각 그룹에서 가장 오래된 키워드를 하나씩 뽑아 n개를 채운다. */
-export function pickRotation<T extends RotationKeyword>(keywords: T[], n = 10): T[] {
-  const groups = new Map<string | null, T[]>()
-  for (const k of keywords) groups.set(k.group_name, [...(groups.get(k.group_name) ?? []), k])
-  const order = [...groups.keys()].sort((a, b) =>
-    a === null ? 1 : b === null ? -1 : a.localeCompare(b),
-  )
-  const queues = order.map((g) => [...groups.get(g)!].sort(byStaleness))
-
-  const picked: T[] = []
-  while (picked.length < n && queues.some((q) => q.length > 0)) {
-    for (const queue of queues) {
-      if (picked.length >= n) break
-      const next = queue.shift()
-      if (next) picked.push(next)
-    }
-  }
-  return picked
+/**
+ * 가장 오래 검색하지 않은 그룹 `groups`개를 고르고, 각 그룹에서 가장 오래된 키워드를 `perGroup`개까지 뽑는다.
+ * 그룹의 오래됨 = 그 그룹에서 가장 오래된 키워드. 같으면 그룹 이름 가나다순(그룹 없음은 마지막).
+ * 결과는 선택된 그룹 순서, 그룹 안에서는 오래된 순이다.
+ */
+export function pickRotation<T extends RotationKeyword>(
+  keywords: T[],
+  { groups = 4, perGroup = 4 }: { groups?: number; perGroup?: number } = {},
+): T[] {
+  const byGroup = new Map<string | null, T[]>()
+  for (const k of keywords) byGroup.set(k.group_name, [...(byGroup.get(k.group_name) ?? []), k])
+  const sorted = [...byGroup.entries()].map(([name, list]) => ({ name, list: [...list].sort(byStaleness) }))
+  sorted.sort((a, b) => {
+    const [x, y] = [a.list[0].last_searched_on, b.list[0].last_searched_on]
+    if (x !== y) return x === null ? -1 : y === null ? 1 : x < y ? -1 : 1
+    return a.name === null ? 1 : b.name === null ? -1 : a.name.localeCompare(b.name)
+  })
+  return sorted.slice(0, groups).flatMap((g) => g.list.slice(0, perGroup))
 }

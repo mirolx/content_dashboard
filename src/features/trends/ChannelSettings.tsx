@@ -54,7 +54,10 @@ export function ChannelSettings({ initial }: { initial: BenchmarkChannel[] }) {
           aria-label={t('channelLabel')}
           placeholder={t('channelLabel')}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setInput(e.target.value)
+            setAddError(null)
+          }}
           className="min-w-0 flex-1 rounded border border-gray-300 px-2 py-1"
         />
         <button

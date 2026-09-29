@@ -68,7 +68,7 @@
 | `uploads_playlist_id` | text | `UU…` |
 
 - `unique(workspace_id, channel_id)`
-- RLS: 기존 워크스페이스 테이블과 같은 select/insert/update/delete 정책, `authenticated`에 select/insert/delete grant.
+- RLS: 기존 워크스페이스 테이블과 같은 방식의 select/insert/delete 정책 (update 정책은 없다 — 채널 정보는 수정하지 않는다), `authenticated`에 select/insert/delete grant.
 - `supabase_realtime` publication에 추가.
 - 워크스페이스당 최대 10개는 서버 액션에서 검사한다.
 
@@ -118,3 +118,4 @@
 - **Vitest (먼저 작성)**: `parseDuration`, `parseChannelInput`, `fetchKeywordVideos`(order/maxResults 파라미터, 180초·카테고리 필터, 정렬), `fetchChannelVideos`(30일 필터, 180초 필터, 채널당 2개, 삭제된 채널 404 건너뛰기), `lookupChannel`(handle/id 분기, 없음), `pickTrends`(4+4, 채우기, 중복 제거, 8개 상한), 메시지 키 일치.
 - **브라우저 확인**: 채널 등록(각 입력 형식) → 중복·한도 에러 → 다시 가져오기 → 위젯 두 묶음 표시 → 숏츠 없음 → pin → 채널 삭제 실시간 반영 → 언어 전환.
 - **사용자 작업**: `0002_trend_sources.sql`을 Supabase SQL Editor에서 실행.
+- **알려진 공백**: `supabase/tests/rls_check.sql`은 아직 `benchmark_channels`를 검사하지 않는다.

@@ -18,6 +18,7 @@
 1. [supabase.com](https://supabase.com)에서 새 프로젝트를 만든다.
 2. **SQL Editor**에서 `supabase/migrations/0001_init.sql` 전체를 붙여넣고 실행한다.
    이어서 `supabase/migrations/0002_trend_sources.sql`도 실행한다.
+   이미 운영 중인 프로젝트를 업데이트할 때는 새 코드를 배포하기 **전에** 0002를 먼저 실행한다. 순서가 바뀌면 실시간 동기화와 트렌드 조회가 실패한다.
 3. 이어서 `supabase/tests/rls_check.sql`을 실행해 결과가 `RLS OK`인지 확인한다.
 4. **Authentication → URL Configuration**
    - Site URL: `http://localhost:3000`
@@ -31,7 +32,7 @@
 3. **APIs & Services → Credentials → Create credentials → API key**로 키를 만든다.
 4. 키 제한(API restrictions)을 "YouTube Data API v3"로 걸어 둔다.
 
-하루 무료 할당량은 10,000 units이고, 이 앱은 사용자당 하루 약 520 units를 쓴다 (키워드 최대 5개 × 100 + 벤치마킹 채널 최대 10개 × 1 + 영상 상세 조회). 결제 정보는 필요 없다.
+하루 무료 할당량은 10,000 units이고, 이 앱은 사용자당 하루 약 520 units를 쓴다 (키워드 최대 5개 × 100 + 벤치마킹 채널 최대 10개 × 1 + 영상 상세 조회). "오늘 트렌드 다시 가져오기"를 한 번 누를 때마다 약 520 units가 든다. 결제 정보는 필요 없다.
 
 ## 3. 구글 로그인 (선택)
 

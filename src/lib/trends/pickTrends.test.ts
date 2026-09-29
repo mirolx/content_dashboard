@@ -41,4 +41,9 @@ describe('pickTrends', () => {
     const result = pickTrends([v('same'), v('c1')], [v('same'), v('k1')])
     expect(ids(result)).toEqual(['c:same', 'c:c1', 'k:k1'])
   })
+
+  it('drops a keyword duplicate only when the channel copy is actually picked', () => {
+    const result = pickTrends([...many('c', 5), v('shared')], [v('shared'), ...many('k', 5)])
+    expect(ids(result)).toEqual(['c:c0', 'c:c1', 'c:c2', 'c:c3', 'k:shared', 'k:k0', 'k:k1', 'k:k2'])
+  })
 })

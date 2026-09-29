@@ -35,11 +35,24 @@ describe('fetchVideoDetails', () => {
       durationSec: 600,
       categoryId: '22',
       publishedAt: '2026-09-20T00:00:00Z',
+      tags: [],
+      description: '',
     })
     const url = new URL(String((fetchImpl.mock.calls as unknown[][])[0][0]))
     expect(url.pathname).toMatch(/\/videos$/)
     expect(url.searchParams.get('part')).toBe('snippet,statistics,contentDetails')
     expect(url.searchParams.get('key')).toBe('k')
+  })
+
+  it('maps tags and truncates the description to 500 characters', async () => {
+    const withText = {
+      ...raw('b'),
+      snippet: { ...raw('b').snippet, tags: ['glow up', 'vlog'], description: 'x'.repeat(600) },
+    }
+    const fetchImpl = vi.fn(async () => json({ items: [withText] }))
+    const [v] = await fetchVideoDetails('k', ['b'], fetchImpl as unknown as typeof fetch)
+    expect(v.tags).toEqual(['glow up', 'vlog'])
+    expect(v.description).toHaveLength(500)
   })
 
   it('splits more than 50 ids into several calls', async () => {

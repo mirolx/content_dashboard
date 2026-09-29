@@ -1,4 +1,5 @@
-import { byViewsDesc, fetchVideoDetails, getJson, MAX_SHORTS_SEC, YOUTUBE_API, type VideoDetail } from './api'
+import { byRelevanceThenViews, scoreAll, type ScoredVideo } from '@/lib/trends/scoreVideo'
+import { fetchVideoDetails, getJson, MAX_SHORTS_SEC, YOUTUBE_API } from './api'
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
@@ -8,25 +9,28 @@ export const NICHE_CATEGORY_IDS = new Set(['22', '23', '24', '26'])
 type SearchResponse = { items?: { id?: { videoId?: string } }[] }
 
 /**
- * 키워드마다 영어권 최근 7일 영상을 관련도 순으로 찾고, 숏츠와 니치 밖 카테고리를 걸러
- * 조회수 순으로 돌려준다. 할당량: search 100 units × 키워드 수 + videos 1 unit/50개.
+ * OR 검색어("a|b|c")마다 영어권 최근 7일 영상을 관련도 순으로 50개씩 찾고,
+ * 숏츠·니치 밖 카테고리·풀 키워드와 하나도 안 맞는 영상을 걸러 관련도 → 조회수 순으로 돌려준다.
+ * 할당량: search 100 units × 검색어 수 + videos 1 unit/50개.
  */
 export async function fetchKeywordVideos({
   apiKey,
-  keywords,
+  queries,
+  pool,
   now,
   fetchImpl = fetch,
 }: {
   apiKey: string
-  keywords: string[]
+  queries: string[]
+  pool: string[]
   now: Date
   fetchImpl?: typeof fetch
-}): Promise<VideoDetail[]> {
-  if (keywords.length === 0) return []
+}): Promise<ScoredVideo[]> {
+  if (queries.length === 0) return []
 
   const publishedAfter = new Date(now.getTime() - WEEK_MS).toISOString()
   const idLists = await Promise.all(
-    keywords.map(async (q) => {
+    queries.map(async (q) => {
       const params = new URLSearchParams({
         part: 'snippet',
         type: 'video',
@@ -35,7 +39,7 @@ export async function fetchKeywordVideos({
         regionCode: 'US',
         order: 'relevance',
         publishedAfter,
-        maxResults: '25',
+        maxResults: '50',
         key: apiKey,
       })
       const data = await getJson<SearchResponse>(fetchImpl, `${YOUTUBE_API}/search?${params}`)
@@ -46,8 +50,10 @@ export async function fetchKeywordVideos({
   const ids = [...new Set(idLists.flat())]
   if (ids.length === 0) return []
 
-  const videos = await fetchVideoDetails(apiKey, ids, fetchImpl)
-  return videos
-    .filter((v) => v.durationSec > MAX_SHORTS_SEC && NICHE_CATEGORY_IDS.has(v.categoryId))
-    .sort(byViewsDesc)
+  const videos = (await fetchVideoDetails(apiKey, ids, fetchImpl)).filter(
+    (v) => v.durationSec > MAX_SHORTS_SEC && NICHE_CATEGORY_IDS.has(v.categoryId),
+  )
+  return scoreAll(videos, pool)
+    .filter((v) => v.relevance > 0)
+    .sort(byRelevanceThenViews)
 }

@@ -12,6 +12,8 @@ const v = (id: string): VideoDetail => ({
   durationSec: 600,
   categoryId: '22',
   publishedAt: '2026-09-25T00:00:00Z',
+  tags: [],
+  description: '',
 })
 const many = (prefix: string, n: number) => Array.from({ length: n }, (_, i) => v(`${prefix}${i}`))
 const ids = (list: { videoId: string; source: string }[]) => list.map((x) => `${x.source[0]}:${x.videoId}`)

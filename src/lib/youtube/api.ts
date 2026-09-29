@@ -25,6 +25,8 @@ export type VideoDetail = {
   durationSec: number
   categoryId: string
   publishedAt: string
+  tags: string[]
+  description: string
 }
 
 type VideosResponse = {
@@ -36,6 +38,8 @@ type VideosResponse = {
       channelTitle: string
       categoryId?: string
       publishedAt: string
+      tags?: string[]
+      description?: string
       thumbnails: Record<string, { url: string } | undefined>
     }
     statistics: { viewCount?: string }
@@ -77,6 +81,8 @@ export async function fetchVideoDetails(
         durationSec: parseDuration(v.contentDetails.duration ?? ''),
         categoryId: v.snippet.categoryId ?? '',
         publishedAt: v.snippet.publishedAt,
+        tags: v.snippet.tags ?? [],
+        description: (v.snippet.description ?? '').slice(0, 500),
       })
     }
   }

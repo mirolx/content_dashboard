@@ -7,13 +7,13 @@ const now = new Date('2026-09-29T00:00:00Z')
 describe('fetchChannelVideos', () => {
   it('returns [] without calling the API when there are no channels', async () => {
     const yt = fakeYouTube({})
-    expect(await fetchChannelVideos({ apiKey: 'k', playlistIds: [], now, fetchImpl: asFetch(yt) })).toEqual([])
+    expect(await fetchChannelVideos({ apiKey: 'k', playlistIds: [], pool: [], now, fetchImpl: asFetch(yt) })).toEqual([])
     expect(yt).not.toHaveBeenCalled()
   })
 
   it('reads 20 recent uploads per channel', async () => {
     const yt = fakeYouTube({ playlists: { UUa: ['a1'] }, videos: [rawVideo('a1')] })
-    await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUa'], now, fetchImpl: asFetch(yt) })
+    await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUa'], pool: [], now, fetchImpl: asFetch(yt) })
     const [call] = callsTo(yt, '/playlistItems')
     expect(call.searchParams.get('playlistId')).toBe('UUa')
     expect(call.searchParams.get('maxResults')).toBe('20')
@@ -32,7 +32,7 @@ describe('fetchChannelVideos', () => {
         rawVideo('b1', { views: '150', channelId: 'UCb', category: '10' }),
       ],
     })
-    const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUa', 'UUb'], now, fetchImpl: asFetch(yt) })
+    const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUa', 'UUb'], pool: [], now, fetchImpl: asFetch(yt) })
 
     // 카테고리 필터 없음 (b1은 음악 카테고리지만 남는다)
     expect(result.map((v) => v.videoId)).toEqual(['a1', 'a2', 'b1'])
@@ -43,7 +43,7 @@ describe('fetchChannelVideos', () => {
       playlists: { UUgone: 'missing', UUb: ['b1'] },
       videos: [rawVideo('b1', { channelId: 'UCb' })],
     })
-    const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUgone', 'UUb'], now, fetchImpl: asFetch(yt) })
+    const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUgone', 'UUb'], pool: [], now, fetchImpl: asFetch(yt) })
     expect(result.map((v) => v.videoId)).toEqual(['b1'])
   })
 
@@ -52,7 +52,26 @@ describe('fetchChannelVideos', () => {
       playlists: { UUlocked: 'forbidden', UUb: ['b1'] },
       videos: [rawVideo('b1', { channelId: 'UCb' })],
     })
-    const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUlocked', 'UUb'], now, fetchImpl: asFetch(yt) })
+    const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUlocked', 'UUb'], pool: [], now, fetchImpl: asFetch(yt) })
     expect(result.map((v) => v.videoId)).toEqual(['b1'])
+  })
+
+  it('ranks by relevance before views, then applies the per-channel cap', async () => {
+    const yt = fakeYouTube({
+      playlists: { UUa: ['popular', 'onNiche1', 'onNiche2'] },
+      videos: [
+        rawVideo('popular', { views: '9999', channelId: 'UCa', title: 'random' }),
+        rawVideo('onNiche1', { views: '10', channelId: 'UCa', title: 'glow up diaries' }),
+        rawVideo('onNiche2', { views: '20', channelId: 'UCa', title: 'glow up routine' }),
+      ],
+    })
+    const result = await fetchChannelVideos({
+      apiKey: 'k',
+      playlistIds: ['UUa'],
+      pool: ['glow up'],
+      now,
+      fetchImpl: asFetch(yt),
+    })
+    expect(result.map((v) => v.videoId)).toEqual(['onNiche2', 'onNiche1'])
   })
 })

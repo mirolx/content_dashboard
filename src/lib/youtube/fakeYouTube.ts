@@ -14,17 +14,31 @@ export function rawVideo(
     category = '22',
     publishedAt = '2026-09-25T00:00:00Z',
     channelId = 'UCa',
-  }: { views?: string; duration?: string; category?: string; publishedAt?: string; channelId?: string } = {},
+    title = `Title ${id}`,
+    tags,
+    description,
+  }: {
+    views?: string
+    duration?: string
+    category?: string
+    publishedAt?: string
+    channelId?: string
+    title?: string
+    tags?: string[]
+    description?: string
+  } = {},
 ) {
   return {
     id,
     snippet: {
-      title: `Title ${id}`,
+      title,
       channelId,
       channelTitle: `Channel ${channelId}`,
       categoryId: category,
       publishedAt,
       thumbnails: { medium: { url: `https://i.ytimg.com/vi/${id}/mqdefault.jpg` } },
+      ...(tags ? { tags } : {}),
+      ...(description !== undefined ? { description } : {}),
     },
     statistics: { viewCount: views },
     contentDetails: { duration },

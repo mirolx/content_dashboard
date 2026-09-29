@@ -73,8 +73,8 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
 
     const now = new Date()
     const [channelVideos, keywordVideos] = await Promise.all([
-      fetchChannelVideos({ apiKey, playlistIds, now }),
-      fetchKeywordVideos({ apiKey, keywords, now }),
+      fetchChannelVideos({ apiKey, playlistIds, pool: keywords, now }),
+      fetchKeywordVideos({ apiKey, queries: keywords, pool: keywords, now }),
     ])
     const picked = pickTrends(channelVideos, keywordVideos)
 

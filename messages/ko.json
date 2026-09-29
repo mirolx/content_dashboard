@@ -80,7 +80,9 @@
     "title": "오늘의 트렌드 추천",
     "loading": "트렌드를 불러오는 중…",
     "empty": "오늘은 추천할 영상을 찾지 못했어요.",
-    "noKeywords": "트렌드 검색 키워드가 없어요.",
+    "noSources": "추천에 쓸 벤치마킹 채널이나 키워드가 없어요.",
+    "fromChannels": "📺 벤치마킹 채널",
+    "fromKeywords": "🔍 키워드 추천",
     "goToSettings": "설정에서 추가하기",
     "failed": "트렌드를 불러오지 못했어요.",
     "showingFrom": "{date} 기준 주제를 보여드려요.",
@@ -138,11 +140,23 @@
     "workspaceName": "워크스페이스 이름",
     "trendKeywords": "트렌드 검색 키워드",
     "keywordLabel": "키워드",
-    "keywordsHelp": "영어권 YouTube에서 최근 7일간 조회수가 높은 영상을 이 키워드로 찾아요. 한 번 조회할 때 최대 5개 키워드까지 사용해요.",
+    "keywordsHelp": "관련도 순으로 영어권 YouTube 최근 7일 영상을 찾고, 3분 이하 영상과 니치 밖 카테고리는 제외해요. 한 번 조회할 때 최대 5개 키워드까지 사용해요.",
     "keywordsEmpty": "키워드가 없어요.",
     "keywordDuplicate": "이미 있는 키워드예요.",
     "refetch": "오늘 트렌드 다시 가져오기",
     "refetchDone": "오늘 트렌드를 새로 가져왔어요.",
-    "refetchFailed": "트렌드를 가져오지 못했어요."
+    "refetchFailed": "트렌드를 가져오지 못했어요.",
+    "refetchTitle": "오늘 트렌드",
+    "benchmarkChannels": "벤치마킹 채널",
+    "channelsHelp": "좋아하는 크리에이터 채널을 등록하면 최근 30일 동안 올라온 3분 넘는 영상 중 조회수가 높은 영상을 추천해요. 최대 10개까지 등록할 수 있어요.",
+    "channelLabel": "@핸들 또는 채널 URL",
+    "channelsEmpty": "등록된 채널이 없어요.",
+    "channelErrors": {
+      "invalid": "입력 형식을 확인해 주세요. 예: @handle 또는 채널 URL",
+      "limit": "최대 10개까지 등록할 수 있어요.",
+      "notFound": "채널을 찾지 못했어요.",
+      "duplicate": "이미 등록된 채널이에요.",
+      "failed": "채널을 추가하지 못했어요. 잠시 후 다시 시도해 주세요."
+    }
   }
 }

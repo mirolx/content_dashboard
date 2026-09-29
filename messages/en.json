@@ -80,7 +80,9 @@
     "title": "Today's trending topics",
     "loading": "Loading trends…",
     "empty": "No videos to recommend today.",
-    "noKeywords": "You have no trend keywords.",
+    "noSources": "You have no benchmark channels or keywords to recommend from.",
+    "fromChannels": "📺 Benchmark channels",
+    "fromKeywords": "🔍 Keyword picks",
     "goToSettings": "Add some in Settings",
     "failed": "Couldn't load trends.",
     "showingFrom": "Showing topics from {date}.",
@@ -138,11 +140,23 @@
     "workspaceName": "Workspace name",
     "trendKeywords": "Trend search keywords",
     "keywordLabel": "Keyword",
-    "keywordsHelp": "We use these keywords to find the most-viewed English YouTube videos from the last 7 days. Up to 5 keywords are used.",
+    "keywordsHelp": "We search recent English YouTube videos (last 7 days) by relevance and skip videos under 3 minutes and off-niche categories. Up to 5 keywords are used.",
     "keywordsEmpty": "No keywords yet.",
     "keywordDuplicate": "That keyword already exists.",
     "refetch": "Fetch today's trends again",
     "refetchDone": "Fetched today's trends.",
-    "refetchFailed": "Couldn't fetch trends."
+    "refetchFailed": "Couldn't fetch trends.",
+    "refetchTitle": "Today's trends",
+    "benchmarkChannels": "Benchmark channels",
+    "channelsHelp": "Add creators you admire and we'll recommend their most-viewed videos over 3 minutes from the last 30 days. Up to 10 channels.",
+    "channelLabel": "@handle or channel URL",
+    "channelsEmpty": "No channels yet.",
+    "channelErrors": {
+      "invalid": "Check the format, e.g. @handle or a channel URL.",
+      "limit": "You can add up to 10 channels.",
+      "notFound": "We couldn't find that channel.",
+      "duplicate": "That channel is already added.",
+      "failed": "Couldn't add the channel. Please try again."
+    }
   }
 }

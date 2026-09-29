@@ -23,6 +23,7 @@ export const WORKSPACE_TABLES = [
   'reference_items',
   'hashtags',
   'trend_keywords',
+  'benchmark_channels',
 ] as const
 export type WorkspaceTable = (typeof WORKSPACE_TABLES)[number]
 export type LiveTable = WorkspaceTable | 'workspaces'
@@ -59,6 +60,8 @@ export type KanbanCard = WorkspaceRow & {
 
 export type TrendKeyword = WorkspaceRow & { keyword: string }
 
+export type TrendSource = 'channel' | 'keyword'
+
 export type TrendTopic = WorkspaceRow & {
   fetched_on: string
   video_id: string
@@ -66,6 +69,15 @@ export type TrendTopic = WorkspaceRow & {
   channel_title: string
   view_count: number
   thumbnail_url: string
+  source: TrendSource
+}
+
+export type BenchmarkChannel = WorkspaceRow & {
+  channel_id: string
+  handle: string | null
+  title: string
+  thumbnail_url: string
+  uploads_playlist_id: string
 }
 
 export type PinnedIdea = WorkspaceRow & {

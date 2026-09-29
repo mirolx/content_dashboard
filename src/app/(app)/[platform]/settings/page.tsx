@@ -3,10 +3,12 @@ import { getTranslations } from 'next-intl/server'
 import { WidgetCard } from '@/components/WidgetCard'
 import { LanguageToggle } from '@/features/settings/LanguageToggle'
 import { WorkspaceNameForm } from '@/features/settings/WorkspaceNameForm'
+import { ChannelSettings } from '@/features/trends/ChannelSettings'
 import { KeywordSettings } from '@/features/trends/KeywordSettings'
+import { RefetchTrends } from '@/features/trends/RefetchTrends'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
 import { createClient } from '@/lib/supabase/server'
-import { isPlatform, type TrendKeyword } from '@/lib/types'
+import { isPlatform, type BenchmarkChannel, type TrendKeyword } from '@/lib/types'
 import { getWorkspace } from '@/lib/workspace'
 
 export default async function SettingsPage({
@@ -21,13 +23,15 @@ export default async function SettingsPage({
   const t = await getTranslations('settings')
 
   let keywords: TrendKeyword[] = []
+  let channels: BenchmarkChannel[] = []
   if (platform === 'youtube') {
     const supabase = await createClient()
-    const { data } = await supabase
-      .from('trend_keywords')
-      .select('*')
-      .eq('workspace_id', workspace.id)
-    keywords = (data ?? []) as TrendKeyword[]
+    const [keywordRes, channelRes] = await Promise.all([
+      supabase.from('trend_keywords').select('*').eq('workspace_id', workspace.id),
+      supabase.from('benchmark_channels').select('*').eq('workspace_id', workspace.id),
+    ])
+    keywords = (keywordRes.data ?? []) as TrendKeyword[]
+    channels = (channelRes.data ?? []) as BenchmarkChannel[]
   }
 
   return (
@@ -41,9 +45,17 @@ export default async function SettingsPage({
           <WorkspaceNameForm workspaceId={workspace.id} name={workspace.name} />
         </WidgetCard>
         {platform === 'youtube' && (
-          <WidgetCard title={t('trendKeywords')}>
-            <KeywordSettings initial={keywords} />
-          </WidgetCard>
+          <>
+            <WidgetCard title={t('benchmarkChannels')}>
+              <ChannelSettings initial={channels} />
+            </WidgetCard>
+            <WidgetCard title={t('trendKeywords')}>
+              <KeywordSettings initial={keywords} />
+            </WidgetCard>
+            <WidgetCard title={t('refetchTitle')}>
+              <RefetchTrends />
+            </WidgetCard>
+          </>
         )}
       </div>
     </WorkspaceRealtime>

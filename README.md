@@ -17,6 +17,7 @@
 
 1. [supabase.com](https://supabase.com)에서 새 프로젝트를 만든다.
 2. **SQL Editor**에서 `supabase/migrations/0001_init.sql` 전체를 붙여넣고 실행한다.
+   이어서 `supabase/migrations/0002_trend_sources.sql`도 실행한다.
 3. 이어서 `supabase/tests/rls_check.sql`을 실행해 결과가 `RLS OK`인지 확인한다.
 4. **Authentication → URL Configuration**
    - Site URL: `http://localhost:3000`
@@ -30,7 +31,7 @@
 3. **APIs & Services → Credentials → Create credentials → API key**로 키를 만든다.
 4. 키 제한(API restrictions)을 "YouTube Data API v3"로 걸어 둔다.
 
-하루 무료 할당량은 10,000 units이고, 이 앱은 사용자당 하루 약 300 units를 쓴다 (트렌드 조회 한 번에 키워드는 최대 5개까지만 사용한다). 결제 정보는 필요 없다.
+하루 무료 할당량은 10,000 units이고, 이 앱은 사용자당 하루 약 520 units를 쓴다 (키워드 최대 5개 × 100 + 벤치마킹 채널 최대 10개 × 1 + 영상 상세 조회). 결제 정보는 필요 없다.
 
 ## 3. 구글 로그인 (선택)
 

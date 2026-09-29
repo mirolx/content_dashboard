@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getTodayTrends } from '@/lib/trends/getTodayTrends'
 import type { ActionResult } from '@/lib/types'
 
-/** 오늘 저장된 트렌드를 지우고 현재 키워드로 다시 가져온다. */
+/** 오늘 저장된 트렌드를 지우고 현재 채널·키워드로 다시 가져온다. */
 export async function refetchTodayTrends(workspaceId: string): Promise<ActionResult> {
   if (!z.uuid().safeParse(workspaceId).success) return { error: 'invalid' }
   await requireUser()

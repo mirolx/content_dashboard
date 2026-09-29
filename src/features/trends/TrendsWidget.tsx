@@ -84,6 +84,15 @@ export function TrendsWidget({
           <p className="text-xs text-gray-600">
             {topic.channel_title} · {t('views', { count: topic.view_count })}
           </p>
+          {topic.matched_keywords.length > 0 && (
+            <div className="mt-1 flex flex-wrap gap-1">
+              {topic.matched_keywords.slice(0, 3).map((keyword) => (
+                <span key={keyword} className="rounded bg-gray-100 px-1 text-[11px] text-gray-600">
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          )}
           <button
             type="button"
             disabled={isPinned}

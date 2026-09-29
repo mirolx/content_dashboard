@@ -1,20 +1,20 @@
 import type { TrendSource } from '@/lib/types'
 import type { VideoDetail } from '@/lib/youtube/api'
 
-export type PickedTrend = VideoDetail & { source: TrendSource }
+export type PickedTrend<T extends VideoDetail = VideoDetail> = T & { source: TrendSource }
 
 /**
  * 채널 후보와 키워드 후보(각각 이미 정렬됨)에서 perSource개씩 고르고,
  * 한쪽이 모자라면 다른 쪽으로 채워 최대 total개를 돌려준다.
  * 같은 영상이 채널 쪽에서 실제로 뽑혔다면 키워드 쪽에서는 뺀다.
  */
-export function pickTrends(
-  channel: VideoDetail[],
-  keyword: VideoDetail[],
+export function pickTrends<T extends VideoDetail>(
+  channel: T[],
+  keyword: T[],
   perSource = 4,
   total = 8,
-): PickedTrend[] {
-  const keywordNotIn = (picked: VideoDetail[]) => {
+): PickedTrend<T>[] {
+  const keywordNotIn = (picked: T[]) => {
     const pickedIds = new Set(picked.map((x) => x.videoId))
     return keyword.filter((x) => !pickedIds.has(x.videoId))
   }

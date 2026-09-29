@@ -38,8 +38,8 @@ export async function fetchChannelVideos({
         const data = await getJson<PlaylistItemsResponse>(fetchImpl, `${YOUTUBE_API}/playlistItems?${params}`)
         return (data.items ?? []).map((i) => i.contentDetails?.videoId).filter((id): id is string => !!id)
       } catch (err) {
-        // 삭제되거나 비공개가 된 채널은 건너뛴다. 그 밖의 오류는 전체 실패로 올린다.
-        if (err instanceof YouTubeApiError && err.status === 404) return []
+        // 삭제·비공개(404)이거나 접근할 수 없는(403) 채널은 건너뛴다. 그 밖의 오류는 전체 실패로 올린다.
+        if (err instanceof YouTubeApiError && (err.status === 404 || err.status === 403)) return []
         throw err
       }
     }),

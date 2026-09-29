@@ -46,4 +46,13 @@ describe('fetchChannelVideos', () => {
     const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUgone', 'UUb'], now, fetchImpl: asFetch(yt) })
     expect(result.map((v) => v.videoId)).toEqual(['b1'])
   })
+
+  it('skips a channel that answers 403 and keeps the others', async () => {
+    const yt = fakeYouTube({
+      playlists: { UUlocked: 'forbidden', UUb: ['b1'] },
+      videos: [rawVideo('b1', { channelId: 'UCb' })],
+    })
+    const result = await fetchChannelVideos({ apiKey: 'k', playlistIds: ['UUlocked', 'UUb'], now, fetchImpl: asFetch(yt) })
+    expect(result.map((v) => v.videoId)).toEqual(['b1'])
+  })
 })

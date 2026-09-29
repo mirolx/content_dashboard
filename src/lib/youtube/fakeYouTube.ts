@@ -47,7 +47,7 @@ export function fakeYouTube({
 }: {
   search?: Record<string, string[]>
   videos?: ReturnType<typeof rawVideo>[]
-  playlists?: Record<string, string[] | 'missing'>
+  playlists?: Record<string, string[] | 'missing' | 'forbidden'>
   channels?: ReturnType<typeof rawChannel>[]
 }) {
   return vi.fn(async (input: string | URL | Request) => {
@@ -62,6 +62,7 @@ export function fakeYouTube({
     }
     if (url.pathname.endsWith('/playlistItems')) {
       const list = playlists[p.get('playlistId') ?? '']
+      if (list === 'forbidden') return json({ error: { code: 403 } }, 403)
       if (!list || list === 'missing') return json({ error: { code: 404 } }, 404)
       return json({ items: list.map((videoId) => ({ contentDetails: { videoId } })) })
     }

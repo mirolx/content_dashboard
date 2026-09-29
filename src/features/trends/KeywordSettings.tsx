@@ -32,6 +32,8 @@ export function KeywordSettings({ initial }: { initial: TrendKeyword[] }) {
       workspace_id: workspaceId,
       keyword: value,
       created_at: new Date().toISOString(),
+      group_name: null,
+      last_searched_on: null,
     }
     setKeyword('')
     void mutate({ type: 'INSERT', row }, () => keywordsData.insert(row))

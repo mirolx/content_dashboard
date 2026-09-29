@@ -58,7 +58,11 @@ export type KanbanCard = WorkspaceRow & {
   position: number
 }
 
-export type TrendKeyword = WorkspaceRow & { keyword: string }
+export type TrendKeyword = WorkspaceRow & {
+  keyword: string
+  group_name: string | null
+  last_searched_on: string | null
+}
 
 export type TrendSource = 'channel' | 'keyword'
 
@@ -70,6 +74,8 @@ export type TrendTopic = WorkspaceRow & {
   view_count: number
   thumbnail_url: string
   source: TrendSource
+  relevance: number
+  matched_keywords: string[]
 }
 
 export type BenchmarkChannel = WorkspaceRow & {

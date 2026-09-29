@@ -140,7 +140,7 @@
     "workspaceName": "Workspace name",
     "trendKeywords": "Trend search keywords",
     "keywordLabel": "Keyword",
-    "keywordsHelp": "Each day we rotate through your groups to pick 10 keywords, search recent English YouTube videos (last 7 days), and show videos that match more of your keywords first. Videos under 3 minutes and off-niche categories are skipped. Up to 100 keywords.",
+    "keywordsHelp": "Each day we take up to 4 keywords from each of the 4 least-recently searched groups, search recent English YouTube videos (last 7 days), and show videos that match more of your keywords first. Videos under 3 minutes and off-niche categories are skipped. Up to 100 keywords.",
     "keywordsEmpty": "No keywords yet.",
     "keywordGroupLabel": "Group (optional)",
     "keywordsPlaceholder": "Paste keywords separated by commas or new lines",

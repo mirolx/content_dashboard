@@ -2,7 +2,7 @@ import { requireUser } from '@/lib/auth/requireUser'
 import { seoulDateString } from '@/lib/dates'
 import { createClient } from '@/lib/supabase/server'
 import type { TrendTopic } from '@/lib/types'
-import { fetchTrends } from '@/lib/youtube/fetchTrends'
+import { fetchKeywordVideos } from '@/lib/youtube/fetchKeywordVideos'
 
 export type TrendsResult =
   | { status: 'ok'; topics: TrendTopic[] }
@@ -62,7 +62,7 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
     const apiKey = process.env.YOUTUBE_API_KEY
     if (!apiKey) throw new Error('YOUTUBE_API_KEY is not set')
 
-    const videos = await fetchTrends({ apiKey, keywords: keywords.slice(0, MAX_KEYWORDS), now: new Date() })
+    const videos = (await fetchKeywordVideos({ apiKey, keywords: keywords.slice(0, MAX_KEYWORDS), now: new Date() })).slice(0, 8)
     if (videos.length > 0) {
       const { error } = await supabase.from('trend_topics').upsert(
         videos.map((v) => ({
@@ -73,6 +73,7 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
           channel_title: v.channelTitle,
           view_count: v.viewCount,
           thumbnail_url: v.thumbnailUrl,
+          source: 'keyword' as const,
         })),
         // 탭 두 개가 동시에 갱신해도 중복 저장되지 않는다.
         { onConflict: 'workspace_id,fetched_on,video_id', ignoreDuplicates: true },

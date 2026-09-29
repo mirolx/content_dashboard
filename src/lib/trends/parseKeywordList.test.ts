@@ -18,4 +18,8 @@ describe('parseKeywordList', () => {
   it('keeps the first of case-insensitive duplicates', () => {
     expect(parseKeywordList('Glow Up, glow up, GLOW UP, mindset')).toEqual(['Glow Up', 'mindset'])
   })
+
+  it('strips | and " so they cannot break the search query', () => {
+    expect(parseKeywordList('say "yes"|no, a|b')).toEqual(['say yes no', 'a b'])
+  })
 })

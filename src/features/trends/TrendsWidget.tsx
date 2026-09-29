@@ -49,11 +49,11 @@ export function TrendsWidget({
     }
   }
 
-  if (result.status === 'no-keywords') {
+  if (result.status === 'no-sources') {
     return (
       <WidgetCard title={t('title')}>
         <p className="text-sm text-gray-600">
-          {t('noKeywords')}{' '}
+          {t('noSources')}{' '}
           <Link href="/youtube/settings" className="underline">
             {t('goToSettings')}
           </Link>
@@ -63,6 +63,39 @@ export function TrendsWidget({
   }
 
   const topics = result.status === 'ok' ? result.topics : result.fallback
+  const groups = [
+    { key: 'channel', title: t('fromChannels'), items: topics.filter((x) => x.source === 'channel') },
+    { key: 'keyword', title: t('fromKeywords'), items: topics.filter((x) => x.source !== 'channel') },
+  ].filter((g) => g.items.length > 0)
+
+  function renderTopic(topic: TrendTopic) {
+    const url = videoUrl(topic.video_id)
+    const isPinned = pinned.has(url)
+    return (
+      <li key={topic.id} className="flex gap-2">
+        {topic.thumbnail_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={topic.thumbnail_url} alt="" className="h-16 w-28 shrink-0 rounded object-cover" />
+        )}
+        <div className="min-w-0 flex-1">
+          <a href={url} target="_blank" rel="noreferrer" className="line-clamp-2 text-sm font-medium hover:underline">
+            {topic.title}
+          </a>
+          <p className="text-xs text-gray-600">
+            {topic.channel_title} · {t('views', { count: topic.view_count })}
+          </p>
+          <button
+            type="button"
+            disabled={isPinned}
+            onClick={() => void pin(topic)}
+            className="mt-1 text-xs underline disabled:text-gray-400 disabled:no-underline"
+          >
+            {isPinned ? t('pinned') : t('pin')}
+          </button>
+        </div>
+      </li>
+    )
+  }
 
   return (
     <WidgetCard title={t('title')} error={pinFailed ? tc('saveFailed') : null}>
@@ -72,44 +105,17 @@ export function TrendsWidget({
         </p>
       )}
 
-      {topics.length === 0 ? (
+      {groups.length === 0 ? (
         <p className="text-sm text-gray-500">{t('empty')}</p>
       ) : (
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {topics.map((topic) => {
-            const url = videoUrl(topic.video_id)
-            const isPinned = pinned.has(url)
-            return (
-              <li key={topic.id} className="flex gap-2">
-                {topic.thumbnail_url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={topic.thumbnail_url} alt="" className="h-16 w-28 shrink-0 rounded object-cover" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="line-clamp-2 text-sm font-medium hover:underline"
-                  >
-                    {topic.title}
-                  </a>
-                  <p className="text-xs text-gray-600">
-                    {topic.channel_title} · {t('views', { count: topic.view_count })}
-                  </p>
-                  <button
-                    type="button"
-                    disabled={isPinned}
-                    onClick={() => void pin(topic)}
-                    className="mt-1 text-xs underline disabled:text-gray-400 disabled:no-underline"
-                  >
-                    {isPinned ? t('pinned') : t('pin')}
-                  </button>
-                </div>
-              </li>
-            )
-          })}
-        </ul>
+        <div className="flex flex-col gap-4">
+          {groups.map((group) => (
+            <section key={group.key}>
+              <h4 className="mb-2 text-sm font-medium text-gray-700">{group.title}</h4>
+              <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">{group.items.map(renderTopic)}</ul>
+            </section>
+          ))}
+        </div>
       )}
     </WidgetCard>
   )

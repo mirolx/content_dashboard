@@ -26,10 +26,10 @@ export function WorkspaceNameForm({ workspaceId, name }: { workspaceId: string; 
         label={t('settings.workspaceName')}
         value={name}
         onSave={save}
-        className="border-gray-300"
+        className="border-current/25 text-base font-semibold"
       />
       {failed && (
-        <span role="alert" className="text-red-600">
+        <span role="alert" className="text-danger">
           {t('common.saveFailed')}
         </span>
       )}

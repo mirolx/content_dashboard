@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Card } from '@/components/ui/card'
 import { LanguageToggle } from '@/features/settings/LanguageToggle'
 import { WorkspaceNameForm } from '@/features/settings/WorkspaceNameForm'
 import { ChannelSettings } from '@/features/trends/ChannelSettings'
@@ -36,25 +36,25 @@ export default async function SettingsPage({
 
   return (
     <WorkspaceRealtime key={workspace.id} workspaceId={workspace.id}>
-      <div className="mx-auto flex max-w-2xl flex-col gap-6">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <WidgetCard title={t('account')}>
+      <div className="mx-auto flex max-w-2xl flex-col gap-2">
+        <h1 className="mb-2 text-4xl font-extrabold tracking-tight">{t('title')}</h1>
+        <Card tone="cream" title={t('account')}>
           <LanguageToggle />
-        </WidgetCard>
-        <WidgetCard title={t('workspace')}>
+        </Card>
+        <Card tone="dark" title={t('workspace')}>
           <WorkspaceNameForm workspaceId={workspace.id} name={workspace.name} />
-        </WidgetCard>
+        </Card>
         {platform === 'youtube' && (
           <>
-            <WidgetCard title={t('benchmarkChannels')}>
+            <Card tone="dark" title={t('benchmarkChannels')}>
               <ChannelSettings initial={channels} />
-            </WidgetCard>
-            <WidgetCard title={t('trendKeywords')}>
+            </Card>
+            <Card tone="dark" title={t('trendKeywords')}>
               <KeywordSettings initial={keywords} />
-            </WidgetCard>
-            <WidgetCard title={t('refetchTitle')}>
+            </Card>
+            <Card tone="accent" title={t('refetchTitle')}>
               <RefetchTrends />
-            </WidgetCard>
+            </Card>
           </>
         )}
       </div>

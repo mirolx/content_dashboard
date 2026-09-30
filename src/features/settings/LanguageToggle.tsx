@@ -3,6 +3,7 @@
 import { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
+import { pillClass } from '@/components/ui/pill-tabs'
 import { setLocale } from '@/i18n/actions'
 import { LOCALES, type Locale } from '@/i18n/locale'
 
@@ -30,9 +31,8 @@ export function LanguageToggle() {
               router.refresh()
             })
           }
-          className={`rounded px-3 py-1 text-sm ${
-            l === locale ? 'bg-gray-900 text-white' : 'border border-gray-300'
-          }`}
+          data-magnetic
+          className={`${pillClass(l === locale)} ${l === locale ? '' : '!border-ink/30 !text-ink'}`}
         >
           {LABELS[l]}
         </button>

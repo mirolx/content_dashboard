@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import { refetchTodayTrends } from './actions'
 
@@ -21,17 +22,12 @@ export function RefetchTrends() {
 
   return (
     <div className="flex items-center gap-3">
-      <button
-        type="button"
-        onClick={refetch}
-        disabled={refetching}
-        className="rounded border border-gray-300 px-3 py-1 text-sm disabled:opacity-50"
-      >
+      <Button size="sm" variant="ink" onClick={refetch} disabled={refetching}>
         {t('refetch')}
-      </button>
-      <span aria-live="polite" className="text-sm">
+      </Button>
+      <span aria-live="polite" className="text-sm font-medium">
         {state === 'done' && t('refetchDone')}
-        {state === 'failed' && <span className="text-red-600">{t('refetchFailed')}</span>}
+        {state === 'failed' && <span className="text-ink font-semibold">{t('refetchFailed')}</span>}
       </span>
     </div>
   )

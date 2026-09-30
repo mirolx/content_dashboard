@@ -1,7 +1,11 @@
 'use client'
 
 import { useState, useTransition, type FormEvent } from 'react'
+import { X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Button, IconButton } from '@/components/ui/button'
+import { fieldClass } from '@/components/ui/field'
+import { Tag } from '@/components/ui/tag'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import type { TrendKeyword } from '@/lib/types'
@@ -52,20 +56,20 @@ export function KeywordSettings({ initial }: { initial: TrendKeyword[] }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-sm text-gray-600">{t('keywordsHelp')}</p>
+      <p className="text-sm opacity-60">{t('keywordsHelp')}</p>
 
       {notice?.kind === 'error' && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-danger">
           {t(`keywordErrors.${notice.error}`)}
         </p>
       )}
       {error && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-danger">
           {tc('saveFailed')}
         </p>
       )}
       {notice?.kind === 'added' && (
-        <p role="status" className="text-sm text-green-700">
+        <p role="status" className="text-sm font-medium opacity-80">
           {t('keywordsAdded', { added: notice.added, skipped: notice.skipped })}
           {notice.truncated > 0 && ` ${t('keywordsTruncated', { count: notice.truncated })}`}
         </p>
@@ -79,7 +83,7 @@ export function KeywordSettings({ initial }: { initial: TrendKeyword[] }) {
           onChange={(e) => setGroup(e.target.value)}
           list="keyword-groups"
           maxLength={30}
-          className="rounded border border-gray-300 px-2 py-1"
+          className={fieldClass}
         />
         <datalist id="keyword-groups">
           {groupNames.map((g) => (
@@ -95,42 +99,36 @@ export function KeywordSettings({ initial }: { initial: TrendKeyword[] }) {
             if (notice?.kind === 'error') setNotice(null)
           }}
           rows={3}
-          className="rounded border border-gray-300 px-2 py-1"
+          className={fieldClass}
         />
-        <button
-          type="submit"
-          disabled={adding}
-          className="self-end rounded bg-gray-900 px-3 py-1 text-white disabled:opacity-50"
-        >
+        <Button type="submit" size="sm" variant="primary" disabled={adding} className="self-end">
           {tc('add')}
-        </button>
+        </Button>
       </form>
 
       {sections.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('keywordsEmpty')}</p>
+        <p className="text-sm opacity-60">{t('keywordsEmpty')}</p>
       ) : (
         sections.map(([name, list]) => (
           <div key={name ?? '__none__'}>
-            <h4 className="mb-1 text-xs font-medium text-gray-500">
-              {name ?? t('ungroupedKeywords')} <span className="text-gray-400">{list.length}</span>
+            <h4 className="mb-1 text-xs font-semibold uppercase tracking-widest opacity-60">
+              {name ?? t('ungroupedKeywords')} <span className="opacity-60">{list.length}</span>
             </h4>
             <ul className="flex flex-wrap gap-1">
               {list.map((row) => (
-                <li
-                  key={row.id}
-                  className="flex items-center gap-1 rounded-full border border-gray-300 px-2 py-0.5 text-sm"
-                >
-                  {row.keyword}
-                  <button
-                    type="button"
-                    aria-label={`${tc('delete')} ${row.keyword}`}
-                    onClick={() =>
-                      void mutate({ type: 'DELETE', id: row.id }, () => keywordsData.remove(row.id))
-                    }
-                    className="text-gray-400 hover:text-red-600"
-                  >
-                    ×
-                  </button>
+                <li key={row.id}>
+                  <Tag>
+                    {row.keyword}
+                    <IconButton
+                      label={`${tc('delete')} ${row.keyword}`}
+                      onClick={() =>
+                        void mutate({ type: 'DELETE', id: row.id }, () => keywordsData.remove(row.id))
+                      }
+                      className="h-5 w-5 border-0"
+                    >
+                      <X className="h-3 w-3" />
+                    </IconButton>
+                  </Tag>
                 </li>
               ))}
             </ul>

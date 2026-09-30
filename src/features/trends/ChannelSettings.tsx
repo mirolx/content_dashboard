@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useTransition, type FormEvent } from 'react'
+import { X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { Button, IconButton } from '@/components/ui/button'
+import { fieldClass } from '@/components/ui/field'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
 import type { BenchmarkChannel } from '@/lib/types'
@@ -41,10 +44,10 @@ export function ChannelSettings({ initial }: { initial: BenchmarkChannel[] }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-sm text-gray-600">{t('channelsHelp')}</p>
+      <p className="text-sm opacity-60">{t('channelsHelp')}</p>
 
       {message && (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-danger">
           {message}
         </p>
       )}
@@ -58,19 +61,15 @@ export function ChannelSettings({ initial }: { initial: BenchmarkChannel[] }) {
             setInput(e.target.value)
             setAddError(null)
           }}
-          className="min-w-0 flex-1 rounded border border-gray-300 px-2 py-1"
+          className={`${fieldClass} min-w-0 flex-1`}
         />
-        <button
-          type="submit"
-          disabled={adding}
-          className="rounded bg-gray-900 px-3 py-1 text-white disabled:opacity-50"
-        >
+        <Button type="submit" size="sm" variant="primary" disabled={adding}>
           {tc('add')}
-        </button>
+        </Button>
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('channelsEmpty')}</p>
+        <p className="text-sm opacity-60">{t('channelsEmpty')}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {rows.map((row) => (
@@ -80,17 +79,16 @@ export function ChannelSettings({ initial }: { initial: BenchmarkChannel[] }) {
                 <img src={row.thumbnail_url} alt="" className="h-6 w-6 rounded-full" />
               )}
               <span className="font-medium">{row.title}</span>
-              {row.handle && <span className="text-gray-500">@{row.handle}</span>}
-              <button
-                type="button"
-                aria-label={`${tc('delete')} ${row.title}`}
+              {row.handle && <span className="opacity-60">@{row.handle}</span>}
+              <IconButton
+                label={`${tc('delete')} ${row.title}`}
                 onClick={() =>
                   void mutate({ type: 'DELETE', id: row.id }, () => channelsData.remove(row.id))
                 }
-                className="ml-auto text-gray-400 hover:text-red-600"
+                className="ml-auto"
               >
-                ×
-              </button>
+                <X className="h-3.5 w-3.5" />
+              </IconButton>
             </li>
           ))}
         </ul>

@@ -2,7 +2,7 @@
 
 유튜브·인스타그램 크리에이터를 위한 올인원 대시보드. 촬영·편집·업로드 일정, 아이디어, 레퍼런스, 해시태그를 한 화면의 벤토 그리드에서 관리하고, 내 니치에 맞는 YouTube 트렌드 영상을 매일 추천받는다.
 
-**🔗 배포:** https://content-dashboard1.vercel.app
+**🔗 배포:** https://content-dashboard1.vercel.app · **🌐 [English](#english)**
 
 <p align="center">
   <img src="docs/images/dashboard-youtube.png" alt="YouTube 워크스페이스 대시보드 — 더스티 로즈 포인트" width="820">
@@ -42,6 +42,66 @@
 - **즉시 반영 + 실시간 동기화** — 입력은 바로 화면에 반영되고 실패하면 되돌아가며, 다른 탭·기기에도 새로고침 없이 반영된다.
 - **자동 저장** — 메모와 인라인 수정은 입력을 멈추면 저장된다.
 - **마그네틱 커서** — 탭과 버튼에 커서를 대면 커서가 버튼 모양으로 감싸고 버튼이 살짝 끌려온다 (터치 기기·동작 줄이기 설정에서는 꺼짐).
+
+## UI 레이아웃
+
+**다크 프레임 벤토 그리드.** 따뜻한 검정 배경 위에 크림 · 포인트 · 다크 세 가지 카드를 섞어 리듬을 만든다. 데스크톱은 12칸 그리드, 모바일(768px 미만)은 1열로 쌓인다.
+
+| 구역 | 왼쪽 | 오른쪽 |
+|---|---|---|
+| 헤더 | 알약 탭: YouTube · Instagram · 설정 | 로그아웃 |
+| 제목 | 워크스페이스 이름 (큰 글씨) | |
+| **오늘 할 일** | 업로드 일정 — 7칸 · cream | 체크리스트 — 5칸 · accent |
+| | 편집 진행 상태 — 12칸 · dark (촬영완료 · 편집중 · 검수중 · 업로드완료) | |
+| **탐색 · 영감** | 오늘의 트렌드 — 8칸 · cream (📺 채널 / 🔍 키워드) | 고정된 아이디어 — 4칸 · dark |
+| | 최근 레퍼런스 — 6칸 · dark | 해시태그 뱅크 — 6칸 · dark |
+| | 빠른 메모 — 8칸 · cream | 성과 스냅샷 — 4칸 · accent |
+| 푸터 | 글꼴 출처 표시 | |
+
+- 숫자는 12칸 중 차지하는 칸 수. Instagram 워크스페이스에는 트렌드 카드가 없고, 아이디어 · 레퍼런스(6+6), 해시태그 · 메모 · 성과(4+4+4)로 채운다.
+- **설정 화면:** 계정(cream) → 워크스페이스 · 벤치마킹 채널 · 트렌드 검색 키워드(dark) → 오늘 트렌드 다시 가져오기(accent).
+- **로그인 화면:** 검정 배경 가운데 크림 카드, 로그인/회원가입 알약 탭.
+
+### 디자인 토큰
+
+| 토큰 | 값 | 용도 |
+|---|---|---|
+| `ink` | `#1C1818` | 페이지 배경, 밝은 카드 위 글자 |
+| `panel` | `#262020` | 다크 카드 |
+| `line` | `#3A3131` | 다크 카드 테두리 |
+| `cream` | `#F6EFEB` | 크림 카드, 어두운 배경 위 글자 |
+| `muted` | `#A89A96` | 보조 글자 |
+| `accent` | YouTube `#D4A5A5` · Instagram `#B5A5D4` | 포인트 (탭에 따라 자동 전환) |
+| `danger` | `#E07A6F` | 삭제 · 에러 |
+
+- 글꼴: 세종글꽃체 (한글 · 영문 공통), 제목은 굵게 · 자간 좁게
+- 모양: 카드 모서리 20px, 버튼 · 탭 · 태그는 알약형, 카드 간격 8px
+- 공용 컴포넌트: `Card`(cream · accent · dark), `Button`(primary · ink · ghost · danger), `IconButton`, `PillTabs`, `Tag`, 입력 필드 클래스 — `src/components/ui/`
+
+## 모션 · 인터랙션
+
+### 마그네틱 커서
+사용자가 가져온 [21st.dev의 Fluid Magnetic Cursor](https://21st.dev/@jahed/components/magnetic-cursor)를 바탕으로 다시 구현했다 (`src/components/ui/magnetic-cursor.tsx`, gsap).
+
+| 동작 | 설명 |
+|---|---|
+| 따라다니기 | 원형 커서가 마우스를 부드럽게 따라온다 (lerp 0.1). 시스템 커서는 그대로 보인다 |
+| 늘어남 | 빠르게 움직이면 이동 방향으로 늘어나고 회전한다 |
+| 색 반전 | `mix-blend-mode: exclusion` + 대비 보정으로 밝은 카드 · 어두운 배경 어디서든 보인다 |
+| 달라붙기 | 탭 · 버튼에 올리면 커서가 그 요소 모양(여백 포함)으로 변해 감싼다 |
+| 끌어당김 | 호버한 요소가 커서 쪽으로 살짝 끌려오고(강도 0.35), 떠나면 탄성 있게 제자리로 돌아간다 |
+
+- 적용 대상: `data-magnetic`이 붙은 요소 — 헤더 알약 탭, `Button`, 트렌드 고정 버튼, 트렌드 설정 화살표.
+- 제외: 입력칸, 체크박스, 작은 아이콘 버튼(이동 · 삭제), 비활성 버튼.
+- 이벤트 위임 방식이라 나중에 나타난 버튼도 동작하고, 호버 중인 버튼이 사라져도(추가 · 페이지 이동) 커서가 멈추지 않는다.
+- 마우스가 없는 기기(`hover: hover`·`pointer: fine`이 아님)에서는 꺼진다. 터치스크린 노트북에서 마우스를 쓰면 켜진다.
+- **동작 줄이기**(`prefers-reduced-motion`) 설정에서는 지연 · 늘어남 · 끌어당김 · 모양 변형 없이 원형 커서만 따라간다.
+
+### 그 밖의 인터랙션
+- **낙관적 업데이트:** 추가 · 수정 · 삭제 · 체크 · 칸반 이동이 서버 응답 전에 바로 보이고, 저장에 실패하면 바꾼 필드만 되돌린다.
+- **실시간 동기화:** 다른 탭 · 기기에서 바꾼 내용이 새로고침 없이 나타난다 (Supabase Realtime).
+- **자동 저장:** 메모와 인라인 수정은 입력을 멈추고 0.8초 뒤 저장, "저장 중… / 저장됨" 표시.
+- **호버 · 포커스:** 버튼은 색만 부드럽게 전환(`transition-colors`, 커서 끌어당김과 충돌하지 않도록), 키보드 포커스에는 외곽선 링이 보인다.
 
 ## 기술 스택
 
@@ -165,3 +225,222 @@ docs/superpowers/      # 설계 스펙과 구현 계획
 - 조건: 유료 양도·판매 금지, 변형 재배포 금지 → 이 저장소에는 **받은 원본 TTF를 수정 없이** 포함한다 (형식 변환·서브셋 금지).
 - 출처 표시: 누리집 사용 시 저작권자를 밝혀야 하므로 모든 화면 하단에 "이 사이트는 세종특별자치시의 세종글꽃체를 사용합니다."를 표시한다.
 - 참고: https://noonnu.cc/font_page/1523
+
+---
+
+<a id="english"></a>
+
+# Creator Dashboard (English)
+
+An all-in-one dashboard for YouTube and Instagram creators. Manage shoot, edit, and upload schedules, ideas, references, and hashtags on a single bento-grid page, and get daily YouTube trend picks tuned to your niche.
+
+**🔗 Live:** https://content-dashboard1.vercel.app
+
+Screenshots are at the [top of this page](#크리에이터-대시보드).
+
+## Features
+
+### Workspaces
+- **YouTube / Instagram workspaces** — switching tabs swaps both the data and the accent color (dusty rose ↔ dusty lavender).
+- **Korean / English** UI toggle, email/password and Google sign-in.
+
+### Today
+- **Upload schedule** — shoot/edit/upload items with done checkboxes
+- **Checklist** — reorder and edit inline
+- **Editing progress** — kanban: Shot → Editing → In review → Uploaded
+
+### Explore & inspiration
+- **Today's trending topics** (YouTube)
+  - 📺 **Benchmark channels** — the most-viewed videos from your chosen channels in the last 30 days (max 2 per channel)
+  - 🔍 **Keyword picks** — a grouped keyword pool (up to 100) rotated daily into OR searches
+  - Ranked by **relevance** (how many of your keywords appear in the title, tags, and description), with the matched keywords shown as tags
+  - Shorts (3 minutes or less) and off-niche categories are skipped; pin any video as an idea
+- **Pinned ideas · References · Hashtag bank · Quick notes**
+
+### Experience
+- **Instant updates + realtime sync** — changes appear immediately, roll back on failure, and show up in other tabs/devices without refreshing.
+- **Autosave** — notes and inline edits save when you stop typing.
+- **Magnetic cursor** — hovering tabs and buttons wraps them with the cursor and pulls them slightly (off on touch devices and with reduced motion).
+
+## UI layout
+
+**Dark-frame bento grid.** A warm black background with a mix of cream, accent, and dark cards. 12 columns on desktop, a single column below 768px.
+
+| Area | Left | Right |
+|---|---|---|
+| Header | Pill tabs: YouTube · Instagram · Settings | Log out |
+| Title | Workspace name (large) | |
+| **Today** | Upload schedule — 7 cols · cream | Checklist — 5 cols · accent |
+| | Editing progress — 12 cols · dark (Shot · Editing · In review · Uploaded) | |
+| **Explore** | Today's trends — 8 cols · cream (📺 channels / 🔍 keywords) | Pinned ideas — 4 cols · dark |
+| | Recent references — 6 cols · dark | Hashtag bank — 6 cols · dark |
+| | Quick notes — 8 cols · cream | Performance snapshot — 4 cols · accent |
+| Footer | Font credit | |
+
+- The Instagram workspace has no trends card; ideas + references (6+6) and hashtags + notes + performance (4+4+4) fill the grid.
+- **Settings:** Account (cream) → Workspace · Benchmark channels · Trend keywords (dark) → Fetch today's trends again (accent).
+- **Login:** a cream card centered on the dark background, with log in / sign up pill tabs.
+
+### Design tokens
+
+| Token | Value | Use |
+|---|---|---|
+| `ink` | `#1C1818` | Page background, text on light cards |
+| `panel` | `#262020` | Dark cards |
+| `line` | `#3A3131` | Dark card borders |
+| `cream` | `#F6EFEB` | Cream cards, text on dark |
+| `muted` | `#A89A96` | Secondary text |
+| `accent` | YouTube `#D4A5A5` · Instagram `#B5A5D4` | Accent (switches with the tab) |
+| `danger` | `#E07A6F` | Delete, errors |
+
+- Font: SejongGeulggot for both Korean and English; bold, tight headings
+- Shape: 20px card radius, pill buttons/tabs/tags, 8px gaps
+- Shared components: `Card` (cream · accent · dark), `Button` (primary · ink · ghost · danger), `IconButton`, `PillTabs`, `Tag`, field classes — `src/components/ui/`
+
+## Motion & interaction
+
+### Magnetic cursor
+Rebuilt from the [Fluid Magnetic Cursor on 21st.dev](https://21st.dev/@jahed/components/magnetic-cursor) (`src/components/ui/magnetic-cursor.tsx`, gsap).
+
+| Behavior | Description |
+|---|---|
+| Follow | A circle smoothly trails the mouse (lerp 0.1); the system cursor stays visible |
+| Stretch | Fast movement stretches and rotates it in the direction of travel |
+| Invert | `mix-blend-mode: exclusion` plus a contrast boost keeps it visible on light cards and dark backgrounds |
+| Snap | Hovering a tab or button morphs the cursor into that element's shape (with padding) |
+| Pull | The hovered element drifts toward the cursor (strength 0.35) and springs back elastically on leave |
+
+- Applies to elements with `data-magnetic`: header pill tabs, `Button`, trend pin buttons, and the trends settings arrow.
+- Excluded: inputs, checkboxes, small icon buttons (move/delete), disabled buttons.
+- Uses event delegation, so late-rendered buttons work, and the cursor keeps moving if the hovered button disappears (after adding an item or navigating).
+- Off on devices without a fine pointer (`hover: hover` and `pointer: fine`); on touchscreen laptops it turns on when you use a mouse.
+- With **reduced motion** (`prefers-reduced-motion`), only a plain circle follows the pointer: no lag, stretch, pull, or morph.
+
+### Other interactions
+- **Optimistic updates:** add, edit, delete, check, and kanban moves show before the server responds; on failure only the changed fields roll back.
+- **Realtime sync:** changes from other tabs and devices appear without refreshing (Supabase Realtime).
+- **Autosave:** notes and inline edits save 0.8s after you stop typing, with a "Saving… / Saved" indicator.
+- **Hover & focus:** buttons only transition colors (`transition-colors`, so CSS doesn't fight the cursor pull), and keyboard focus shows an outline ring.
+
+## Tech stack
+
+| Area | Used |
+|---|---|
+| Framework | Next.js 16 (App Router, `proxy.ts`), React 19, TypeScript |
+| Styling | Tailwind CSS 4 (`@theme` tokens), lucide-react, SejongGeulggot font |
+| Backend | Supabase — Postgres + RLS, Auth, Realtime |
+| External API | YouTube Data API v3 |
+| Other | next-intl (ko/en), zod, gsap (magnetic cursor) |
+| Tests | Vitest (127) |
+| Hosting | Vercel |
+
+## Getting started
+
+### Prerequisites (all free)
+
+| Item | Purpose |
+|---|---|
+| Node.js 22.12+ (24 recommended) | Dev server |
+| Supabase project (free plan) | Database, auth, realtime |
+| Google Cloud project | YouTube Data API key, Google sign-in |
+
+### 1. Supabase
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the **SQL Editor**, run the migrations **once each, in order**:
+   1. `supabase/migrations/0001_init.sql`
+   2. `supabase/migrations/0002_trend_sources.sql`
+   3. `supabase/migrations/0003_keyword_pool.sql`
+
+   When updating an existing deployment, run new migrations **before** deploying the new code; otherwise realtime sync and trend fetching fail.
+3. Run `supabase/tests/rls_check.sql` and confirm it returns `RLS OK`.
+4. **Authentication → URL Configuration**
+   - Site URL: `http://localhost:3000` (your deployed URL after deploying)
+   - Redirect URLs: `http://localhost:3000/auth/callback` (add `https://<deployed URL>/auth/callback` after deploying)
+5. Copy the Project URL and anon (public) key from **Project Settings → API**.
+
+### 2. YouTube Data API key
+
+1. Create a project in the [Google Cloud Console](https://console.cloud.google.com/).
+2. Enable "YouTube Data API v3" under **APIs & Services → Library**.
+3. Create a key under **APIs & Services → Credentials → Create credentials → API key**.
+4. Restrict the key to "YouTube Data API v3".
+
+The free quota is 10,000 units per day. One trend fetch uses about 430 units (4 least-recently searched keyword groups × one 100-unit search + up to 10 benchmark channels + video details). "Fetch today's trends again" costs the same. No billing is required.
+
+### 3. Google sign-in (optional)
+
+1. Set up **APIs & Services → OAuth consent screen** (External; add your email as a test user).
+2. **Credentials → Create credentials → OAuth client ID** → Web application
+   - Authorized redirect URI: `https://<project-ref>.supabase.co/auth/v1/callback`
+     (the exact URL is shown under Supabase **Authentication → Sign In / Providers → Google**)
+3. Enter the Client ID and Client Secret in Supabase's Google provider and enable it.
+
+### 4. Run locally
+
+```bash
+cp .env.example .env.local   # fill in the three values
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 → sign up → YouTube dashboard.
+
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon (public) key |
+| `YOUTUBE_API_KEY` | YouTube Data API key (server only — never publish it) |
+
+### 5. Deploy to Vercel
+
+1. Import this GitHub repository in Vercel (framework: Next.js).
+2. Add the three **Environment Variables** (Production and Preview); mark `YOUTUBE_API_KEY` as Sensitive.
+3. After deploying, add the deployed URL to Supabase's Site URL and Redirect URLs (see 1-4).
+4. Every push to `main` redeploys automatically.
+
+### Testing on a phone (local)
+
+1. Put your PC and phone on the same Wi-Fi and run `npm run dev -- -H 0.0.0.0`.
+2. Open `http://<PC LAN IP>:3000` on the phone (Windows: `ipconfig`).
+3. Add `http://<PC LAN IP>:3000/auth/callback` to Supabase Redirect URLs.
+4. Uncomment `allowedDevOrigins` in `next.config.ts` and set it to **your PC's LAN IP** (the Next.js 16 dev server blocks HMR from non-localhost origins; no need to commit this).
+5. Confirmation emails link to the Site URL, so **sign up and confirm on the PC**, then only **log in** on the phone.
+
+## Commands
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Dev server |
+| `npm test` | Unit tests (Vitest) |
+| `npm run typecheck` | Type check |
+| `npm run lint` | ESLint |
+| `npm run build` | Production build |
+
+## Project structure
+
+```
+src/
+  app/                 # routes (login, /youtube, /instagram, settings, auth callback)
+  components/ui/       # Card, Button, PillTabs, Tag, fields, magnetic cursor
+  features/            # per-widget UI + data (schedule, checklist, kanban, trends …)
+  lib/
+    realtime/          # optimistic updates, Realtime subscriptions, autosave
+    trends/            # rotation, OR queries, relevance scoring, 4+4 merge
+    youtube/           # YouTube API calls (tested with a fake fetch)
+  i18n/                # next-intl setup, locale persistence
+messages/              # ko.json / en.json
+supabase/              # migrations, RLS check script
+docs/superpowers/      # design specs and implementation plans
+```
+
+Design specs live in [`docs/superpowers/specs`](docs/superpowers/specs) and implementation plans in [`docs/superpowers/plans`](docs/superpowers/plans) (written in Korean).
+
+## Font license
+
+Both Korean and English text use **SejongGeulggot** (`src/app/fonts/SejongGeulggot.ttf`).
+
+- Copyright: Sejong Special Self-Governing City (public work, free to use under the Ministry of Culture, Sports and Tourism public-work guidelines)
+- Terms: no paid transfer or sale, no redistribution of modified versions → this repository includes the **original TTF, unmodified** (no format conversion or subsetting).
+- Credit: web use requires naming the copyright holder, so every page shows "This site uses the SejongGeulggot font by Sejong Special Self-Governing City." at the bottom.
+- Source: https://noonnu.cc/font_page/1523

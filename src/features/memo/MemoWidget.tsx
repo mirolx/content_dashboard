@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Card } from '@/components/ui/card'
+import { fieldClass } from '@/components/ui/field'
 import type { ChangeEvent } from '@/lib/realtime/applyChange'
 import { useAutosave } from '@/lib/realtime/useAutosave'
 import { useRealtimeTable, useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
@@ -42,7 +43,7 @@ export function MemoWidget({ initialMemo }: { initialMemo: string }) {
           : ''
 
   return (
-    <WidgetCard title={t('title')}>
+    <Card title={t('title')} tone="cream">
       <textarea
         aria-label={t('label')}
         placeholder={t('placeholder')}
@@ -66,11 +67,11 @@ export function MemoWidget({ initialMemo }: { initialMemo: string }) {
           setFocused(false)
           void flush()
         }}
-        className="w-full rounded border border-gray-300 p-2 text-sm"
+        className={`${fieldClass} w-full`}
       />
-      <p aria-live="polite" className="mt-1 h-4 text-xs text-gray-500">
+      <p aria-live="polite" className="mt-2 h-4 text-xs opacity-60">
         {statusText}
       </p>
-    </WidgetCard>
+    </Card>
   )
 }

@@ -1,9 +1,12 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Button, IconButton } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { fieldClass } from '@/components/ui/field'
 import { newId } from '@/lib/id'
 import { positionAfter } from '@/lib/position'
 import { useLiveList } from '@/lib/realtime/useLiveList'
@@ -53,34 +56,34 @@ export function KanbanWidget({ initial }: { initial: KanbanCard[] }) {
   }
 
   return (
-    <WidgetCard title={t('title')} error={error ? tc('saveFailed') : null}>
-      <form onSubmit={add} className="mb-3 flex gap-2">
+    <Card title={t('title')} tone="dark" error={error ? tc('saveFailed') : null}>
+      <form onSubmit={add} className="mb-4 flex gap-2">
         <input
           aria-label={t('cardLabel')}
           placeholder={t('cardLabel')}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="min-w-0 flex-1 rounded border border-gray-300 px-2 py-1"
+          className={`${fieldClass} flex-1`}
         />
-        <button type="submit" className="rounded bg-gray-900 px-3 py-1 text-white">
+        <Button type="submit" size="sm" variant="primary">
           {tc('add')}
-        </button>
+        </Button>
       </form>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {KANBAN_STATUSES.map((status, col) => {
           const cards = rows.filter((r) => r.status === status)
           return (
-            <div key={status} className="rounded bg-gray-50 p-2">
-              <h4 className="mb-2 text-sm font-medium">
-                {t(`statuses.${status}`)} <span className="text-gray-500">{cards.length}</span>
+            <div key={status} className="rounded-2xl bg-ink p-3">
+              <h4 className={`mb-2 text-sm font-bold ${cards.length > 0 ? 'text-accent' : 'text-muted'}`}>
+                {t(`statuses.${status}`)} <span className="opacity-60">{cards.length}</span>
               </h4>
               {cards.length === 0 ? (
-                <p className="text-xs text-gray-400">{t('emptyColumn')}</p>
+                <p className="text-xs opacity-50">{t('emptyColumn')}</p>
               ) : (
                 <ul className="flex flex-col gap-2">
                   {cards.map((card) => (
-                    <li key={card.id} className="rounded border border-gray-300 bg-white p-2">
+                    <li key={card.id} className="rounded-xl bg-cream p-3 text-ink">
                       <EditableText
                         label={t('cardLabel')}
                         value={card.title}
@@ -88,35 +91,29 @@ export function KanbanWidget({ initial }: { initial: KanbanCard[] }) {
                         className="w-full text-sm"
                       />
                       <div className="mt-1 flex items-center gap-1 text-xs">
-                        <button
-                          type="button"
-                          aria-label={tc('moveLeft')}
-                          disabled={col === 0}
-                          onClick={() => shift(card, -1)}
-                          className="px-1 disabled:opacity-30"
-                        >
-                          ←
-                        </button>
-                        <button
-                          type="button"
-                          aria-label={tc('moveRight')}
+                        <IconButton label={tc('moveLeft')} disabled={col === 0} onClick={() => shift(card, -1)}>
+                          <ChevronLeft className="h-4 w-4" />
+                        </IconButton>
+                        <IconButton
+                          label={tc('moveRight')}
                           disabled={col === KANBAN_STATUSES.length - 1}
                           onClick={() => shift(card, 1)}
-                          className="px-1 disabled:opacity-30"
                         >
-                          →
-                        </button>
-                        <button
-                          type="button"
+                          <ChevronRight className="h-4 w-4" />
+                        </IconButton>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          magnetic={false}
                           onClick={() =>
                             void mutate({ type: 'DELETE', id: card.id }, () =>
                               kanbanData.remove(card.id),
                             )
                           }
-                          className="ml-auto text-red-600"
+                          className="ml-auto"
                         >
                           {tc('delete')}
-                        </button>
+                        </Button>
                       </div>
                     </li>
                   ))}
@@ -126,6 +123,6 @@ export function KanbanWidget({ initial }: { initial: KanbanCard[] }) {
           )
         })}
       </div>
-    </WidgetCard>
+    </Card>
   )
 }

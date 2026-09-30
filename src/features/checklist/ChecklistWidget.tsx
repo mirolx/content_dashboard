@@ -1,9 +1,12 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Button, IconButton } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { fieldClass } from '@/components/ui/field'
 import { newId } from '@/lib/id'
 import { positionAfter, positionBetween } from '@/lib/position'
 import { useLiveList } from '@/lib/realtime/useLiveList'
@@ -54,24 +57,24 @@ export function ChecklistWidget({ initial }: { initial: ChecklistItem[] }) {
   }
 
   return (
-    <WidgetCard title={t('title')} error={error ? tc('saveFailed') : null}>
-      <form onSubmit={add} className="mb-3 flex gap-2">
+    <Card title={t('title')} tone="accent" error={error ? tc('saveFailed') : null}>
+      <form onSubmit={add} className="mb-4 flex gap-2">
         <input
           aria-label={t('itemLabel')}
           placeholder={t('itemLabel')}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="min-w-0 flex-1 rounded border border-gray-300 px-2 py-1"
+          className={`${fieldClass} flex-1`}
         />
-        <button type="submit" className="rounded bg-gray-900 px-3 py-1 text-white">
+        <Button type="submit" size="sm" variant="ink">
           {tc('add')}
-        </button>
+        </Button>
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('empty')}</p>
+        <p className="text-sm opacity-60">{t('empty')}</p>
       ) : (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col gap-1.5">
           {rows.map((row, i) => (
             <li key={row.id} className="flex items-center gap-2">
               <input
@@ -79,44 +82,33 @@ export function ChecklistWidget({ initial }: { initial: ChecklistItem[] }) {
                 aria-label={tc('done')}
                 checked={row.is_done}
                 onChange={(e) => void update(row, { is_done: e.target.checked })}
+                className="h-4 w-4 accent-ink"
               />
               <EditableText
                 label={t('itemLabel')}
                 value={row.content}
                 onSave={(v) => update(row, { content: v })}
-                className={`flex-1 ${row.is_done ? 'text-gray-400 line-through' : ''}`}
+                className={`flex-1 text-sm ${row.is_done ? 'line-through opacity-50' : ''}`}
               />
-              <button
-                type="button"
-                aria-label={tc('moveUp')}
-                disabled={i === 0}
-                onClick={() => move(i, -1)}
-                className="px-1 disabled:opacity-30"
-              >
-                ↑
-              </button>
-              <button
-                type="button"
-                aria-label={tc('moveDown')}
-                disabled={i === rows.length - 1}
-                onClick={() => move(i, 1)}
-                className="px-1 disabled:opacity-30"
-              >
-                ↓
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  void mutate({ type: 'DELETE', id: row.id }, () => checklistData.remove(row.id))
-                }
-                className="text-sm text-red-600"
+              <IconButton label={tc('moveUp')} disabled={i === 0} onClick={() => move(i, -1)}>
+                <ChevronUp className="h-4 w-4" />
+              </IconButton>
+              <IconButton label={tc('moveDown')} disabled={i === rows.length - 1} onClick={() => move(i, 1)}>
+                <ChevronDown className="h-4 w-4" />
+              </IconButton>
+              <Button
+                variant="danger"
+                size="sm"
+                magnetic={false}
+                onClick={() => void mutate({ type: 'DELETE', id: row.id }, () => checklistData.remove(row.id))}
+                className="!text-ink"
               >
                 {tc('delete')}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
       )}
-    </WidgetCard>
+    </Card>
   )
 }

@@ -3,7 +3,10 @@
 import { useState, type FormEvent } from 'react'
 import { useFormatter, useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { fieldClass, selectClass } from '@/components/ui/field'
+import { Tag } from '@/components/ui/tag'
 import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
@@ -51,20 +54,20 @@ export function ScheduleWidget({ initial }: { initial: ScheduleItem[] }) {
   }
 
   return (
-    <WidgetCard title={t('title')} error={error ? tc('saveFailed') : null}>
-      <form onSubmit={add} className="mb-3 flex flex-wrap gap-2">
+    <Card title={t('title')} tone="cream" error={error ? tc('saveFailed') : null}>
+      <form onSubmit={add} className="mb-4 flex flex-wrap gap-2">
         <input
           aria-label={t('titleLabel')}
           placeholder={t('titleLabel')}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="min-w-0 flex-1 rounded border border-gray-300 px-2 py-1"
+          className={`${fieldClass} flex-1`}
         />
         <select
           aria-label={t('kindLabel')}
           value={kind}
           onChange={(e) => setKind(e.target.value as ScheduleKind)}
-          className="rounded border border-gray-300 px-2 py-1"
+          className={selectClass}
         >
           {SCHEDULE_KINDS.map((k) => (
             <option key={k} value={k}>
@@ -78,17 +81,17 @@ export function ScheduleWidget({ initial }: { initial: ScheduleItem[] }) {
           value={when}
           onChange={(e) => setWhen(e.target.value)}
           required
-          className="rounded border border-gray-300 px-2 py-1"
+          className={fieldClass}
         />
-        <button type="submit" className="rounded bg-gray-900 px-3 py-1 text-white">
+        <Button type="submit" size="sm" variant="primary">
           {tc('add')}
-        </button>
+        </Button>
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('empty')}</p>
+        <p className="text-sm opacity-60">{t('empty')}</p>
       ) : (
-        <ul className="flex flex-col gap-1">
+        <ul className="flex flex-col gap-1.5">
           {rows.map((row) => (
             <li key={row.id} className={`flex items-center gap-2 ${row.is_done ? 'opacity-50' : ''}`}>
               <input
@@ -96,9 +99,10 @@ export function ScheduleWidget({ initial }: { initial: ScheduleItem[] }) {
                 aria-label={tc('done')}
                 checked={row.is_done}
                 onChange={(e) => void update(row, { is_done: e.target.checked })}
+                className="h-4 w-4 accent-[var(--accent)]"
               />
-              <span className="rounded bg-gray-100 px-1 text-xs">{t(`kinds.${row.kind}`)}</span>
-              <span className="shrink-0 text-xs text-gray-600">
+              <Tag>{t(`kinds.${row.kind}`)}</Tag>
+              <span className="shrink-0 text-xs font-semibold opacity-70">
                 {format.dateTime(new Date(row.scheduled_at), {
                   dateStyle: 'medium',
                   timeStyle: 'short',
@@ -110,19 +114,20 @@ export function ScheduleWidget({ initial }: { initial: ScheduleItem[] }) {
                 onSave={(v) => update(row, { title: v })}
                 className="flex-1"
               />
-              <button
-                type="button"
+              <Button
+                variant="danger"
+                size="sm"
+                magnetic={false}
                 onClick={() =>
                   void mutate({ type: 'DELETE', id: row.id }, () => scheduleData.remove(row.id))
                 }
-                className="text-sm text-red-600"
               >
                 {tc('delete')}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
       )}
-    </WidgetCard>
+    </Card>
   )
 }

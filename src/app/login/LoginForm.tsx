@@ -75,7 +75,7 @@ export function LoginForm({ callbackFailed }: { callbackFailed: boolean }) {
           </label>
 
           {errorKey && (
-            <p role="alert" className="text-sm font-medium text-danger">
+            <p role="alert" className="rounded-xl border-l-4 border-danger bg-ink/5 px-3 py-2 text-sm font-medium text-ink">
               {t(`errors.${errorKey}`)}
             </p>
           )}

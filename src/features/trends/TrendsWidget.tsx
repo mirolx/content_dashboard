@@ -112,14 +112,14 @@ export function TrendsWidget({
           href="/youtube/settings"
           data-magnetic
           aria-label={t('goToSettings')}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-current/30 transition hover:border-current/70"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-current/30 transition-colors hover:border-current/70"
         >
           <ArrowUpRight className="h-4 w-4" />
         </Link>
       }
     >
       {result.status === 'failed' && (
-        <p role="status" className="mb-2 text-sm font-medium text-danger">
+        <p role="status" className="mb-2 rounded-xl border-l-4 border-danger bg-ink/5 px-3 py-2 text-sm font-medium text-ink">
           {t('failed')} {result.fetchedOn && t('showingFrom', { date: result.fetchedOn })}
         </p>
       )}

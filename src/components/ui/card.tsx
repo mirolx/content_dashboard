@@ -28,7 +28,14 @@ export function Card({
         {action}
       </div>
       {error && (
-        <p role="alert" className="mb-3 rounded-xl bg-danger/15 px-3 py-2 text-sm font-medium text-danger">
+        <p
+          role="alert"
+          className={`mb-3 ${
+            tone === 'dark'
+              ? 'rounded-xl bg-danger/15 px-3 py-2 text-sm font-medium text-danger'
+              : 'rounded-xl border-l-4 border-danger bg-ink/5 px-3 py-2 text-sm font-medium text-ink'
+          }`}
+        >
           {error}
         </p>
       )}

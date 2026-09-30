@@ -26,7 +26,8 @@ type MagneticCursorProps = {
 /**
  * 마우스를 부드럽게 따라다니는 원형 커서. data-magnetic 요소에 올리면 그 요소 모양으로 바뀌고
  * 요소가 커서 쪽으로 살짝 끌려온다. 문서 전체에서 이벤트를 받으므로 나중에 렌더링된 요소도 동작한다.
- * 터치 기기에서는 끄고, prefers-reduced-motion이면 지연·늘어남 없이 따라간다.
+ * 터치 기기에서는 끈다. prefers-reduced-motion이면 요소를 끌어당기거나 요소 모양으로 바꾸지 않고,
+ * 지연·늘어남 없는 평범한 원이 포인터를 따라가기만 한다.
  */
 export function MagneticCursor({
   children,
@@ -77,7 +78,7 @@ export function MagneticCursor({
 
     const tick = () => {
       if (hovered && !hovered.isConnected) release()
-      if (hovered) return
+      if (hovered && !reduced) return
       current = lerp(current, target, reduced ? 1 : lerpAmount)
       const delta = sub(current, previous)
       previous = current
@@ -98,6 +99,7 @@ export function MagneticCursor({
     const attach = (el: HTMLElement) => {
       hovered = el
       detaching = false
+      if (reduced) return
       const bounds = el.getBoundingClientRect()
       const padding = hoverPadding * (1 + magneticFactor)
       gsap.killTweensOf(cursor)
@@ -111,6 +113,7 @@ export function MagneticCursor({
         scaleX: 1,
         scaleY: 1,
         rotate: 0,
+        opacity: 1,
         duration: 0.3,
         ease: 'power3.out',
         overwrite: true,
@@ -133,6 +136,7 @@ export function MagneticCursor({
         backgroundColor: cursorColor,
         scaleX: 1,
         scaleY: 1,
+        opacity: 1,
         duration: detachDuration,
         ease: 'power3.out',
         overwrite: true,
@@ -143,9 +147,11 @@ export function MagneticCursor({
     }
 
     const detach = (el: HTMLElement) => {
-      const m = moverFor(el)
-      m.x(0)
-      m.y(0)
+      if (!reduced) {
+        const m = moverFor(el)
+        m.x(0)
+        m.y(0)
+      }
       settle()
     }
 
@@ -171,7 +177,7 @@ export function MagneticCursor({
         visible = true
         gsap.to(cursor, { opacity: 1, duration: 0.2, overwrite: 'auto' })
       }
-      if (hovered) {
+      if (hovered && !reduced) {
         const { left, top, width, height } = hovered.getBoundingClientRect()
         const m = moverFor(hovered)
         m.x((e.clientX - (left + width / 2)) * magneticFactor)

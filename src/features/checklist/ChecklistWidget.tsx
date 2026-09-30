@@ -101,7 +101,6 @@ export function ChecklistWidget({ initial }: { initial: ChecklistItem[] }) {
                 size="sm"
                 magnetic={false}
                 onClick={() => void mutate({ type: 'DELETE', id: row.id }, () => checklistData.remove(row.id))}
-                className="!text-ink"
               >
                 {tc('delete')}
               </Button>

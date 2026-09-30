@@ -3,7 +3,9 @@
 import { useState, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { fieldClass } from '@/components/ui/field'
 import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
@@ -47,14 +49,14 @@ export function PinnedIdeasWidget({ initial }: { initial: PinnedIdea[] }) {
   }
 
   return (
-    <WidgetCard title={t('title')} error={error ? tc('saveFailed') : null}>
+    <Card title={t('title')} tone="dark" error={error ? tc('saveFailed') : null}>
       <form onSubmit={add} className="mb-3 flex flex-col gap-2">
         <input
           aria-label={t('titleLabel')}
           placeholder={t('titleLabel')}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="rounded border border-gray-300 px-2 py-1"
+          className={fieldClass}
         />
         <div className="flex gap-2">
           <input
@@ -62,23 +64,23 @@ export function PinnedIdeasWidget({ initial }: { initial: PinnedIdea[] }) {
             placeholder={t('noteLabel')}
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="min-w-0 flex-1 rounded border border-gray-300 px-2 py-1"
+            className={`${fieldClass} min-w-0 flex-1`}
           />
-          <button type="submit" className="rounded bg-gray-900 px-3 py-1 text-white">
+          <Button type="submit" size="sm">
             {tc('add')}
-          </button>
+          </Button>
         </div>
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('empty')}</p>
+        <p className="text-sm opacity-60">{t('empty')}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {rows.map((row) => (
-            <li key={row.id} className="flex gap-2 rounded border border-gray-300 p-2">
+            <li key={row.id} className="flex gap-2 rounded-2xl border border-current/15 p-3">
               {row.thumbnail_url && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={row.thumbnail_url} alt="" className="h-12 w-20 shrink-0 rounded object-cover" />
+                <img src={row.thumbnail_url} alt="" className="h-12 w-20 shrink-0 rounded-xl object-cover" />
               )}
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <EditableText
@@ -87,28 +89,30 @@ export function PinnedIdeasWidget({ initial }: { initial: PinnedIdea[] }) {
                   onSave={(v) => update(row, { title: v })}
                   className="text-sm font-medium"
                 />
-                {row.note && <p className="text-xs text-gray-600">{row.note}</p>}
+                {row.note && <p className="text-xs opacity-60">{row.note}</p>}
                 <div className="flex items-center gap-2 text-xs">
                   {row.source_url && (
-                    <a href={row.source_url} target="_blank" rel="noreferrer" className="underline">
+                    <a href={row.source_url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
                       {t('source')}
                     </a>
                   )}
-                  <button
-                    type="button"
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    magnetic={false}
                     onClick={() =>
                       void mutate({ type: 'DELETE', id: row.id }, () => ideasData.remove(row.id))
                     }
-                    className="ml-auto text-red-600"
+                    className="ml-auto"
                   >
                     {tc('delete')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </li>
           ))}
         </ul>
       )}
-    </WidgetCard>
+    </Card>
   )
 }

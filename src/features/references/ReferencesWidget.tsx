@@ -3,7 +3,10 @@
 import { useState, type FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { EditableText } from '@/components/EditableText'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { fieldClass, selectClass } from '@/components/ui/field'
+import { Tag } from '@/components/ui/tag'
 import { newId } from '@/lib/id'
 import { useLiveList } from '@/lib/realtime/useLiveList'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
@@ -60,10 +63,11 @@ export function ReferencesWidget({ initial }: { initial: ReferenceItem[] }) {
     )
   }
 
-  const inputClass = 'min-w-0 rounded border border-gray-300 px-2 py-1'
+  const inputClass = `${fieldClass} min-w-0`
 
   return (
-    <WidgetCard
+    <Card
+      tone="dark"
       title={t('title')}
       error={invalidUrl ? t('invalidUrl') : error ? tc('saveFailed') : null}
     >
@@ -72,7 +76,7 @@ export function ReferencesWidget({ initial }: { initial: ReferenceItem[] }) {
           aria-label={t('kindLabel')}
           value={kind}
           onChange={(e) => setKind(e.target.value as ReferenceKind)}
-          className={inputClass}
+          className={`${selectClass} min-w-0`}
         >
           {REFERENCE_KINDS.map((k) => (
             <option key={k} value={k}>
@@ -84,50 +88,54 @@ export function ReferencesWidget({ initial }: { initial: ReferenceItem[] }) {
         <input aria-label={t('urlLabel')} placeholder={t('urlLabel')} value={url} onChange={(e) => setUrl(e.target.value)} className={inputClass} />
         <input aria-label={t('imageUrlLabel')} placeholder={t('imageUrlLabel')} value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className={inputClass} />
         <input aria-label={t('noteLabel')} placeholder={t('noteLabel')} value={note} onChange={(e) => setNote(e.target.value)} className={`${inputClass} sm:col-span-2`} />
-        <button type="submit" className="rounded bg-gray-900 px-3 py-1 text-white sm:col-span-2">
+        <Button type="submit" size="sm" className="sm:col-span-2">
           {tc('add')}
-        </button>
+        </Button>
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('empty')}</p>
+        <p className="text-sm opacity-60">{t('empty')}</p>
       ) : (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {rows.map((row) => (
-            <li key={row.id} className="flex flex-col gap-1 rounded border border-gray-300 p-2">
+            <li key={row.id} className="flex flex-col gap-1 rounded-2xl border border-current/15 p-3">
               {row.image_url && (
                 // 외부 임의 도메인 이미지라 next/image 대신 img를 쓴다.
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={row.image_url} alt="" className="h-28 w-full rounded object-cover" />
+                <img src={row.image_url} alt="" className="h-28 w-full rounded-xl object-cover" />
               )}
-              <span className="w-fit rounded bg-gray-100 px-1 text-xs">{t(`kinds.${row.kind}`)}</span>
+              <span className="w-fit">
+                <Tag>{t(`kinds.${row.kind}`)}</Tag>
+              </span>
               <EditableText
                 label={t('titleLabel')}
                 value={row.title}
                 onSave={(v) => update(row, { title: v })}
                 className="text-sm font-medium"
               />
-              {row.note && <p className="text-xs text-gray-600">{row.note}</p>}
+              {row.note && <p className="text-xs opacity-60">{row.note}</p>}
               <div className="mt-auto flex items-center gap-2 text-sm">
                 {row.url && (
-                  <a href={row.url} target="_blank" rel="noreferrer" className="underline">
+                  <a href={row.url} target="_blank" rel="noreferrer" className="underline underline-offset-2">
                     {t('open')}
                   </a>
                 )}
-                <button
-                  type="button"
+                <Button
+                  variant="danger"
+                  size="sm"
+                  magnetic={false}
                   onClick={() =>
                     void mutate({ type: 'DELETE', id: row.id }, () => referencesData.remove(row.id))
                   }
-                  className="ml-auto text-red-600"
+                  className="ml-auto"
                 >
                   {tc('delete')}
-                </button>
+                </Button>
               </div>
             </li>
           ))}
         </ul>
       )}
-    </WidgetCard>
+    </Card>
   )
 }

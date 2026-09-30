@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Tag } from '@/components/ui/tag'
 import { ideasData } from '@/features/ideas/data'
 import { newId } from '@/lib/id'
 import { useWorkspaceId } from '@/lib/realtime/WorkspaceRealtime'
@@ -51,14 +54,14 @@ export function TrendsWidget({
 
   if (result.status === 'no-sources') {
     return (
-      <WidgetCard title={t('title')}>
-        <p className="text-sm text-gray-600">
+      <Card tone="cream" title={t('title')}>
+        <p className="text-sm opacity-60">
           {t('noSources')}{' '}
-          <Link href="/youtube/settings" className="underline">
+          <Link href="/youtube/settings" className="underline underline-offset-2">
             {t('goToSettings')}
           </Link>
         </p>
-      </WidgetCard>
+      </Card>
     )
   }
 
@@ -75,57 +78,64 @@ export function TrendsWidget({
       <li key={topic.id} className="flex gap-2">
         {topic.thumbnail_url && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={topic.thumbnail_url} alt="" className="h-16 w-28 shrink-0 rounded object-cover" />
+          <img src={topic.thumbnail_url} alt="" className="h-16 w-28 shrink-0 rounded-xl object-cover" />
         )}
         <div className="min-w-0 flex-1">
-          <a href={url} target="_blank" rel="noreferrer" className="line-clamp-2 text-sm font-medium hover:underline">
+          <a href={url} target="_blank" rel="noreferrer" className="line-clamp-2 text-sm font-semibold hover:underline">
             {topic.title}
           </a>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs opacity-60">
             {topic.channel_title} · {t('views', { count: topic.view_count })}
           </p>
           {topic.matched_keywords.length > 0 && (
             <div className="mt-1 flex flex-wrap gap-1">
               {topic.matched_keywords.slice(0, 3).map((keyword) => (
-                <span key={keyword} className="rounded bg-gray-100 px-1 text-[11px] text-gray-600">
-                  {keyword}
-                </span>
+                <Tag key={keyword} tone="accent">{keyword}</Tag>
               ))}
             </div>
           )}
-          <button
-            type="button"
-            disabled={isPinned}
-            onClick={() => void pin(topic)}
-            className="mt-1 text-xs underline disabled:text-gray-400 disabled:no-underline"
-          >
+          <Button size="sm" variant="ghost" disabled={isPinned} onClick={() => void pin(topic)} className="mt-2">
             {isPinned ? t('pinned') : t('pin')}
-          </button>
+          </Button>
         </div>
       </li>
     )
   }
 
   return (
-    <WidgetCard title={t('title')} error={pinFailed ? tc('saveFailed') : null}>
+    <Card
+      tone="cream"
+      title={t('title')}
+      error={pinFailed ? tc('saveFailed') : null}
+      action={
+        <Link
+          href="/youtube/settings"
+          data-magnetic
+          aria-label={t('goToSettings')}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-current/30 transition hover:border-current/70"
+        >
+          <ArrowUpRight className="h-4 w-4" />
+        </Link>
+      }
+    >
       {result.status === 'failed' && (
-        <p role="status" className="mb-2 text-sm text-amber-700">
+        <p role="status" className="mb-2 text-sm font-medium text-danger">
           {t('failed')} {result.fetchedOn && t('showingFrom', { date: result.fetchedOn })}
         </p>
       )}
 
       {groups.length === 0 ? (
-        <p className="text-sm text-gray-500">{t('empty')}</p>
+        <p className="text-sm opacity-60">{t('empty')}</p>
       ) : (
         <div className="flex flex-col gap-4">
           {groups.map((group) => (
             <section key={group.key}>
-              <h4 className="mb-2 text-sm font-medium text-gray-700">{group.title}</h4>
+              <h4 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-60">{group.title}</h4>
               <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">{group.items.map(renderTopic)}</ul>
             </section>
           ))}
         </div>
       )}
-    </WidgetCard>
+    </Card>
   )
 }

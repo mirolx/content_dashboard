@@ -58,9 +58,6 @@
 | | 빠른 메모 — 8칸 · cream | 성과 스냅샷 — 4칸 · accent |
 | 푸터 | 글꼴 출처 표시 | |
 
-- 숫자는 12칸 중 차지하는 칸 수. Instagram 워크스페이스에는 트렌드 카드가 없고, 아이디어 · 레퍼런스(6+6), 해시태그 · 메모 · 성과(4+4+4)로 채운다.
-- **설정 화면:** 계정(cream) → 워크스페이스 · 벤치마킹 채널 · 트렌드 검색 키워드(dark) → 오늘 트렌드 다시 가져오기(accent).
-- **로그인 화면:** 검정 배경 가운데 크림 카드, 로그인/회원가입 알약 탭.
 
 ### 디자인 토큰
 
@@ -81,7 +78,7 @@
 ## 모션 · 인터랙션
 
 ### 마그네틱 커서
-사용자가 가져온 [21st.dev의 Fluid Magnetic Cursor](https://21st.dev/@jahed/components/magnetic-cursor)를 바탕으로 다시 구현했다 (`src/components/ui/magnetic-cursor.tsx`, gsap).
+[21st.dev의 Fluid Magnetic Cursor](https://21st.dev/@jahed/components/magnetic-cursor)를 바탕으로 다시 구현했다 (`src/components/ui/magnetic-cursor.tsx`, gsap).
 
 | 동작 | 설명 |
 |---|---|
@@ -117,7 +114,7 @@
 
 ## 시작하기
 
-### 준비물 (모두 무료)
+### 준비물 
 
 | 항목 | 용도 |
 |---|---|
@@ -276,10 +273,6 @@ Screenshots are at the [top of this page](#크리에이터-대시보드).
 | | Recent references — 6 cols · dark | Hashtag bank — 6 cols · dark |
 | | Quick notes — 8 cols · cream | Performance snapshot — 4 cols · accent |
 | Footer | Font credit | |
-
-- The Instagram workspace has no trends card; ideas + references (6+6) and hashtags + notes + performance (4+4+4) fill the grid.
-- **Settings:** Account (cream) → Workspace · Benchmark channels · Trend keywords (dark) → Fetch today's trends again (accent).
-- **Login:** a cream card centered on the dark background, with log in / sign up pill tabs.
 
 ### Design tokens
 

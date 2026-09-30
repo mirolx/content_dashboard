@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
-import { WidgetCard } from '@/components/WidgetCard'
+import { Card } from '@/components/ui/card'
 import { ChecklistWidget } from '@/features/checklist/ChecklistWidget'
 import { HashtagsWidget } from '@/features/hashtags/HashtagsWidget'
 import { KanbanWidget } from '@/features/kanban/KanbanWidget'
@@ -14,6 +14,8 @@ import { loadDashboard } from '@/lib/dashboard'
 import { WorkspaceRealtime } from '@/lib/realtime/WorkspaceRealtime'
 import { isPlatform } from '@/lib/types'
 import { getWorkspace } from '@/lib/workspace'
+
+const sectionClass = 'mt-4 text-xs font-semibold uppercase tracking-widest text-muted md:col-span-12'
 
 export default async function DashboardPage({
   params,
@@ -31,11 +33,11 @@ export default async function DashboardPage({
   return (
     // key: 탭을 바꾸면 위젯 상태를 새 워크스페이스로 완전히 초기화한다.
     <WorkspaceRealtime key={workspace.id} workspaceId={workspace.id}>
-      <h1 className="mb-4 text-2xl font-bold">{workspace.name}</h1>
+      <h1 className="mb-6 text-4xl font-extrabold tracking-tight md:text-5xl">{workspace.name}</h1>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-12">
         {/* ── 오늘 할 일 ── */}
-        <h2 className="text-lg font-semibold md:col-span-12">{t('dashboard.today')}</h2>
+        <h2 className={sectionClass}>{t('dashboard.today')}</h2>
         <div className="md:col-span-7">
           <ScheduleWidget initial={data.schedule} />
         </div>
@@ -47,14 +49,14 @@ export default async function DashboardPage({
         </div>
 
         {/* ── 탐색 · 영감 ── */}
-        <h2 className="mt-4 text-lg font-semibold md:col-span-12">{t('dashboard.explore')}</h2>
+        <h2 className={sectionClass}>{t('dashboard.explore')}</h2>
         {isYouTube && (
           <div className="md:col-span-8">
             <Suspense
               fallback={
-                <WidgetCard title={t('trends.title')}>
-                  <p className="text-sm text-gray-500">{t('trends.loading')}</p>
-                </WidgetCard>
+                <Card title={t('trends.title')} tone="cream">
+                  <p className="text-sm opacity-60">{t('trends.loading')}</p>
+                </Card>
               }
             >
               <TrendsSection workspaceId={workspace.id} />
@@ -74,9 +76,9 @@ export default async function DashboardPage({
           <MemoWidget initialMemo={workspace.memo} />
         </div>
         <div className="md:col-span-4">
-          <WidgetCard title={t('performance.title')}>
-            <p className="text-sm text-gray-500">{t('performance.comingSoon')}</p>
-          </WidgetCard>
+          <Card title={t('performance.title')} tone="accent">
+            <p className="text-sm font-medium opacity-70">{t('performance.comingSoon')}</p>
+          </Card>
         </div>
       </div>
     </WorkspaceRealtime>

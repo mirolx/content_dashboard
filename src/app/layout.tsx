@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  const locale = await getLocale()
+  const [locale, t] = await Promise.all([getLocale(), getTranslations('meta')])
 
   return (
     <html lang={locale} className={sejong.variable}>
@@ -27,6 +27,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <NextIntlClientProvider>
           <MagneticCursor magneticFactor={0.35} cursorSize={28}>
             {children}
+            {/* 세종글꽃체 라이선스: 누리집에 사용할 때 저작권자(세종특별자치시)를 밝힌다. */}
+            <footer className="px-4 pb-6 pt-10 text-center text-xs text-muted">{t('fontCredit')}</footer>
           </MagneticCursor>
         </NextIntlClientProvider>
       </body>

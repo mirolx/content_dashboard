@@ -56,6 +56,8 @@ export type KanbanCard = WorkspaceRow & {
   title: string
   status: KanbanStatus
   position: number
+  /** 연결된 Notion 페이지 (없으면 null) */
+  notion_url: string | null
 }
 
 export type TrendKeyword = WorkspaceRow & {

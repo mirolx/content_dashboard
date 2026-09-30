@@ -70,6 +70,13 @@
     "title": "편집 진행 상태",
     "cardLabel": "영상 제목",
     "emptyColumn": "없음",
+    "notionOpen": "Notion 페이지 열기",
+    "notionLink": "Notion 페이지 연결",
+    "notionEdit": "Notion 링크 수정",
+    "notionPlaceholder": "https://www.notion.so/…",
+    "notionInvalid": "Notion 페이지 주소(notion.so / notion.site)를 넣어 주세요. 비워 두고 저장하면 연결이 해제돼요.",
+    "notionSave": "저장",
+    "notionCancel": "취소",
     "statuses": {
       "shot": "촬영완료",
       "editing": "편집중",

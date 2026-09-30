@@ -70,6 +70,13 @@
     "title": "Editing progress",
     "cardLabel": "Video title",
     "emptyColumn": "None",
+    "notionOpen": "Open Notion page",
+    "notionLink": "Link a Notion page",
+    "notionEdit": "Edit Notion link",
+    "notionPlaceholder": "https://www.notion.so/…",
+    "notionInvalid": "Enter a Notion page URL (notion.so / notion.site). Save it empty to unlink.",
+    "notionSave": "Save",
+    "notionCancel": "Cancel",
     "statuses": {
       "shot": "Shot",
       "editing": "Editing",

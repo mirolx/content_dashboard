@@ -28,7 +28,7 @@
 ### 오늘 할 일
 - **업로드 일정** — 촬영·편집·업로드 일정과 완료 체크
 - **체크리스트** — 순서 변경, 인라인 수정
-- **편집 진행 상태** — 촬영완료 → 편집중 → 검수중 → 업로드완료 칸반
+- **편집 진행 상태** — 촬영완료 → 편집중 → 검수중 → 업로드완료 칸반. 카드마다 **Notion 페이지를 연결**해 두고 클릭 한 번으로 대본·기획 페이지를 연다
 
 ### 탐색 · 영감
 - **오늘의 트렌드 추천** (YouTube)
@@ -109,7 +109,7 @@
 | 백엔드 | Supabase — Postgres + RLS, Auth, Realtime |
 | 외부 API | YouTube Data API v3 |
 | 기타 | next-intl (ko/en), zod, gsap (마그네틱 커서) |
-| 테스트 | Vitest (127개) |
+| 테스트 | Vitest (138개) |
 | 배포 | Vercel |
 
 ## 시작하기
@@ -129,6 +129,7 @@
    1. `supabase/migrations/0001_init.sql`
    2. `supabase/migrations/0002_trend_sources.sql`
    3. `supabase/migrations/0003_keyword_pool.sql`
+   4. `supabase/migrations/0004_kanban_notion_links.sql`
 
    이미 운영 중인 프로젝트를 업데이트할 때는 새 코드를 배포하기 **전에** 새 마이그레이션을 먼저 실행한다. 순서가 바뀌면 실시간 동기화와 트렌드 조회가 실패한다.
 3. `supabase/tests/rls_check.sql`을 실행해 결과가 `RLS OK`인지 확인한다.
@@ -244,7 +245,7 @@ Screenshots are at the [top of this page](#크리에이터-대시보드).
 ### Today
 - **Upload schedule** — shoot/edit/upload items with done checkboxes
 - **Checklist** — reorder and edit inline
-- **Editing progress** — kanban: Shot → Editing → In review → Uploaded
+- **Editing progress** — kanban: Shot → Editing → In review → Uploaded. Each card can **link a Notion page** so its script/plan opens in one click
 
 ### Explore & inspiration
 - **Today's trending topics** (YouTube)
@@ -324,7 +325,7 @@ Rebuilt from the [Fluid Magnetic Cursor on 21st.dev](https://21st.dev/@jahed/com
 | Backend | Supabase — Postgres + RLS, Auth, Realtime |
 | External API | YouTube Data API v3 |
 | Other | next-intl (ko/en), zod, gsap (magnetic cursor) |
-| Tests | Vitest (127) |
+| Tests | Vitest (138) |
 | Hosting | Vercel |
 
 ## Getting started
@@ -344,6 +345,7 @@ Rebuilt from the [Fluid Magnetic Cursor on 21st.dev](https://21st.dev/@jahed/com
    1. `supabase/migrations/0001_init.sql`
    2. `supabase/migrations/0002_trend_sources.sql`
    3. `supabase/migrations/0003_keyword_pool.sql`
+   4. `supabase/migrations/0004_kanban_notion_links.sql`
 
    When updating an existing deployment, run new migrations **before** deploying the new code; otherwise realtime sync and trend fetching fail.
 3. Run `supabase/tests/rls_check.sql` and confirm it returns `RLS OK`.

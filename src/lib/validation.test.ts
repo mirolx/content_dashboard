@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeTag, optionalUrlSchema, textSchema } from './validation'
+import { normalizeTag, notionUrlSchema, optionalUrlSchema, textSchema } from './validation'
 
 describe('textSchema', () => {
   it('trims and requires at least one character', () => {
@@ -33,5 +33,31 @@ describe('normalizeTag', () => {
 
   it('returns an empty string for blank input', () => {
     expect(normalizeTag(' # ')).toBe('')
+  })
+})
+
+describe('notionUrlSchema', () => {
+  it.each([
+    'https://www.notion.so/My-Script-0123456789abcdef0123456789abcdef',
+    'https://notion.so/workspace/Page-abc',
+    'https://mirolx.notion.site/Draft-abc?pvs=4',
+    '  https://notion.site/abc  ',
+  ])('accepts %s', (url) => {
+    expect(notionUrlSchema.parse(url)).toBe(url.trim())
+  })
+
+  it('turns an empty value into null (unlink)', () => {
+    expect(notionUrlSchema.parse('   ')).toBeNull()
+  })
+
+  it.each([
+    'http://www.notion.so/abc',
+    'https://example.com/abc',
+    'https://notion.so.evil.com/abc',
+    'https://evilnotion.so/abc',
+    'notion.so/abc',
+    'javascript:alert(1)',
+  ])('rejects %s', (url) => {
+    expect(notionUrlSchema.safeParse(url).success).toBe(false)
   })
 })

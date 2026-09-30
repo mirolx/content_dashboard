@@ -15,7 +15,7 @@
   --color-cream: #f6efeb;
   --color-muted: #a89a96;
   --color-danger: #e07a6f;
-  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-sans: var(--font-sejong), -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 /* inline: 유틸리티가 var(--accent)를 직접 참조해야 data-platform 아래에서 값이 바뀐다. */

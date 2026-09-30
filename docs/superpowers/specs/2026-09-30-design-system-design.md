@@ -21,7 +21,7 @@
 
 - **레이아웃**: 다크 프레임(레퍼런스 A안). 페이지 배경은 따뜻한 검정, 위젯은 크림·포인트·다크 카드를 섞은 벤토 리듬.
 - **포인트 색**: YouTube = 더스티 로즈 `#D4A5A5`, Instagram = 더스티 라벤더 `#B5A5D4`. 탭을 바꾸면 포인트 색 전체가 바뀐다. 로그인 등 플랫폼이 없는 화면은 로즈.
-- **글꼴**: Pretendard, 제목 800 굵기·자간 -0.02em.
+- **글꼴**: 세종글꽃체(SejongGeulggot, Regular 1종)를 한글·영문 공통으로 사용. 제목은 800 굵기·자간 -0.02em(단일 굵기라 브라우저가 굵게 합성). *(2026-09-30 Pretendard에서 변경)*
 - **마그네틱**: 원형 커서는 전 화면, 마그네틱은 누르는 요소(버튼·알약 탭·트렌드 고정 버튼)에만. 입력칸·체크박스·작은 아이콘 버튼은 제외. 터치 기기·동작 줄이기에서는 끔. 시스템 커서는 숨기지 않는다.
 
 ## 3. 디자인 토큰 (`src/app/globals.css`, Tailwind 4 `@theme`)
@@ -39,7 +39,7 @@
 - `--accent`: 기본 `#D4A5A5`, `[data-platform="instagram"]` 아래에서 `#B5A5D4`.
 - `(app)` 레이아웃의 클라이언트 컴포넌트 `PlatformScope`가 현재 경로에서 플랫폼을 구해(`platformFromPath`) 감싸는 요소에 `data-platform`을 단다. 헤더 탭도 이 안에 있어 같은 포인트 색을 쓴다.
 - 모양: 카드 반경 20px(`rounded-[20px]`), 알약 999px, 벤토 간격 8px(`gap-2`).
-- 글꼴: `pretendard` 패키지의 가변 폰트 CSS를 루트 레이아웃에서 import, `font-sans`를 Pretendard로.
+- 글꼴: `src/app/fonts/SejongGeulggot.ttf`(원본 그대로, 7.8MB — 라이선스가 변형 재배포를 금지하므로 형식 변환하지 않음)를 `next/font/local`로 불러와 `--font-sejong` 변수로 두고, `font-sans`를 이 변수로. 웹 사용 조건에 따라 모든 화면 하단에 출처를 표시한다.
 
 ## 4. 공용 컴포넌트 (`src/components/ui/`)
 

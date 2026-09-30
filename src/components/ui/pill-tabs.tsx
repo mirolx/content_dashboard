@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 /** 알약 탭 모양. 선택된 탭은 accent로 채우고 나머지는 테두리만. */
 export function pillClass(active: boolean) {
-  return `inline-flex h-10 items-center rounded-full px-4 text-sm font-semibold transition ${
+  return `inline-flex h-10 items-center rounded-full px-4 text-sm font-semibold transition-colors ${
     active ? 'bg-accent text-ink' : 'border border-line text-cream hover:border-cream/60'
   }`
 }

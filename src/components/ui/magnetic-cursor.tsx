@@ -47,7 +47,7 @@ export function MagneticCursor({
   useEffect(() => {
     const cursor = cursorRef.current
     if (!cursor) return
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    const isTouch = !window.matchMedia('(hover: hover) and (pointer: fine)').matches
     if (disableOnTouch && isTouch) return
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -59,6 +59,7 @@ export function MagneticCursor({
     let previous: Vec = vec(-100, -100)
     let initialized = false
     let detaching = false
+    let visible = false
     let hovered: HTMLElement | null = null
     const movers = new WeakMap<HTMLElement, { x: gsap.QuickToFunc; y: gsap.QuickToFunc }>()
 
@@ -75,6 +76,7 @@ export function MagneticCursor({
     }
 
     const tick = () => {
+      if (hovered && !hovered.isConnected) release()
       if (hovered) return
       current = lerp(current, target, reduced ? 1 : lerpAmount)
       const delta = sub(current, previous)
@@ -115,16 +117,14 @@ export function MagneticCursor({
       })
     }
 
-    const detach = (el: HTMLElement) => {
+    /** 커서를 현재 위치에서 원형으로 되돌린다. hovered 요소는 건드리지 않는다. */
+    const settle = () => {
       const x = gsap.getProperty(cursor, 'x') as number
       const y = gsap.getProperty(cursor, 'y') as number
       current = vec(x, y)
       previous = vec(x, y)
       hovered = null
       detaching = true
-      const m = moverFor(el)
-      m.x(0)
-      m.y(0)
       gsap.killTweensOf(cursor)
       gsap.to(cursor, {
         width: cursorSize,
@@ -142,6 +142,16 @@ export function MagneticCursor({
       })
     }
 
+    const detach = (el: HTMLElement) => {
+      const m = moverFor(el)
+      m.x(0)
+      m.y(0)
+      settle()
+    }
+
+    // 호버 중이던 요소가 DOM에서 사라지면 pointerout이 오지 않으므로 직접 풀어준다.
+    const release = () => settle()
+
     const magneticTarget = (node: EventTarget | null) => {
       const el = node instanceof Element ? node.closest<HTMLElement>(SELECTOR) : null
       return el && !el.matches(':disabled') ? el : null
@@ -149,14 +159,18 @@ export function MagneticCursor({
 
     const onPointerMove = (e: PointerEvent) => {
       if (e.pointerType === 'touch') return
+      if (hovered && !hovered.isConnected) release()
       target = vec(e.clientX, e.clientY)
       if (!initialized) {
         initialized = true
         current = target
         previous = target
-        gsap.set(cursor, { x: target.x, y: target.y })
+        if (!hovered) gsap.set(cursor, { x: target.x, y: target.y })
       }
-      gsap.to(cursor, { opacity: 1, duration: 0.2, overwrite: 'auto' })
+      if (!visible) {
+        visible = true
+        gsap.to(cursor, { opacity: 1, duration: 0.2, overwrite: 'auto' })
+      }
       if (hovered) {
         const { left, top, width, height } = hovered.getBoundingClientRect()
         const m = moverFor(hovered)
@@ -166,6 +180,8 @@ export function MagneticCursor({
     }
 
     const onPointerOver = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return
+      if (hovered && !hovered.isConnected) release()
       const el = magneticTarget(e.target)
       if (!el || el === hovered) return
       if (hovered) detach(hovered)
@@ -173,12 +189,16 @@ export function MagneticCursor({
     }
 
     const onPointerOut = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return
       if (!hovered) return
       if (magneticTarget(e.relatedTarget) === hovered) return
       detach(hovered)
     }
 
-    const onDocumentLeave = () => gsap.to(cursor, { opacity: 0, duration: 0.3 })
+    const onDocumentLeave = () => {
+      visible = false
+      gsap.to(cursor, { opacity: 0, duration: 0.3 })
+    }
 
     gsap.ticker.add(tick)
     window.addEventListener('pointermove', onPointerMove)
@@ -192,7 +212,10 @@ export function MagneticCursor({
       document.removeEventListener('pointerover', onPointerOver)
       document.removeEventListener('pointerout', onPointerOut)
       document.documentElement.removeEventListener('mouseleave', onDocumentLeave)
-      if (hovered) gsap.set(hovered, { x: 0, y: 0 })
+      if (hovered) {
+        gsap.killTweensOf(hovered)
+        gsap.set(hovered, { x: 0, y: 0 })
+      }
       gsap.killTweensOf(cursor)
     }
   }, [

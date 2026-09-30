@@ -29,7 +29,7 @@ export function Button({
       {...props}
       type={type}
       data-magnetic={magnetic ? '' : undefined}
-      className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full font-semibold transition disabled:opacity-40 ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full font-semibold transition-colors disabled:opacity-40 ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
     />
   )
 }

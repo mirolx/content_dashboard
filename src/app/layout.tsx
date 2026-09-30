@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getTranslations } from 'next-intl/server'
 import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css'
 import './globals.css'
+import { MagneticCursor } from '@/components/ui/magnetic-cursor'
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('meta')
@@ -16,7 +17,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang={locale}>
       <body className="min-h-screen bg-ink font-sans text-cream antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <MagneticCursor magneticFactor={0.35} cursorSize={28}>
+            {children}
+          </MagneticCursor>
+        </NextIntlClientProvider>
       </body>
     </html>
   )

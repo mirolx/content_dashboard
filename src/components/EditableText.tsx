@@ -46,7 +46,7 @@ export function EditableText({
         void flush()
         if (!draft.trim()) setDraft(value)
       }}
-      className={`min-w-0 rounded-md border border-transparent bg-transparent px-1 hover:border-current/30 focus:border-current/60 focus:outline-none ${className}`}
+      className={`min-w-0 rounded-md border border-transparent bg-transparent px-1 hover:border-current/30 focus:border-current/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-current/30 ${className}`}
     />
   )
 }

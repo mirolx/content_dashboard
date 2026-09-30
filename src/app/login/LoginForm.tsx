@@ -43,7 +43,7 @@ export function LoginForm({ callbackFailed }: { callbackFailed: boolean }) {
               aria-selected={mode === m}
               onClick={() => setMode(m)}
               data-magnetic
-              className={`${pillClass(mode === m)} ${mode === m ? '' : '!border-ink/30 !text-ink'}`}
+              className={`${pillClass(mode === m, 'light')}`}
             >
               {t(m === 'login' ? 'loginTab' : 'signupTab')}
             </button>
@@ -90,7 +90,7 @@ export function LoginForm({ callbackFailed }: { callbackFailed: boolean }) {
           </Button>
         </form>
 
-        <p className="my-4 text-center text-xs uppercase tracking-widest opacity-50">{t('or')}</p>
+        <p className="my-4 text-center text-xs uppercase tracking-widest opacity-75">{t('or')}</p>
         <Button variant="ghost" onClick={() => void continueWithGoogle()} className="w-full">
           {t('google')}
         </Button>

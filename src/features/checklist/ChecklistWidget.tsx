@@ -72,7 +72,7 @@ export function ChecklistWidget({ initial }: { initial: ChecklistItem[] }) {
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm opacity-60">{t('empty')}</p>
+        <p className="text-sm opacity-75">{t('empty')}</p>
       ) : (
         <ul className="flex flex-col gap-1.5">
           {rows.map((row, i) => (
@@ -88,7 +88,7 @@ export function ChecklistWidget({ initial }: { initial: ChecklistItem[] }) {
                 label={t('itemLabel')}
                 value={row.content}
                 onSave={(v) => update(row, { content: v })}
-                className={`flex-1 text-sm ${row.is_done ? 'line-through opacity-50' : ''}`}
+                className={`flex-1 text-sm ${row.is_done ? 'line-through opacity-75' : ''}`}
               />
               <IconButton label={tc('moveUp')} disabled={i === 0} onClick={() => move(i, -1)}>
                 <ChevronUp className="h-4 w-4" />

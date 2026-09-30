@@ -69,7 +69,7 @@ export function MemoWidget({ initialMemo }: { initialMemo: string }) {
         }}
         className={`${fieldClass} w-full`}
       />
-      <p aria-live="polite" className="mt-2 h-4 text-xs opacity-60">
+      <p aria-live="polite" className="mt-2 h-4 text-xs opacity-75">
         {statusText}
       </p>
     </Card>

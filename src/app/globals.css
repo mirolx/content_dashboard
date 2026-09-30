@@ -27,4 +27,5 @@ html,
 body {
   background: var(--color-ink);
   color: var(--color-cream);
+  color-scheme: dark;
 }

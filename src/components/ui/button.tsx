@@ -29,7 +29,7 @@ export function Button({
       {...props}
       type={type}
       data-magnetic={magnetic ? '' : undefined}
-      className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full font-semibold transition-colors disabled:opacity-40 ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-40 ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
     />
   )
 }
@@ -47,7 +47,7 @@ export function IconButton({
       {...props}
       type={type}
       aria-label={label}
-      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-current/20 transition hover:border-current/60 disabled:opacity-30 ${className}`}
+      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-current/20 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current hover:border-current/60 disabled:opacity-30 ${className}`}
     >
       {children}
     </button>

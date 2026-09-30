@@ -55,7 +55,7 @@ export default async function DashboardPage({
             <Suspense
               fallback={
                 <Card title={t('trends.title')} tone="cream">
-                  <p className="text-sm opacity-60">{t('trends.loading')}</p>
+                  <p className="text-sm opacity-75">{t('trends.loading')}</p>
                 </Card>
               }
             >
@@ -77,7 +77,7 @@ export default async function DashboardPage({
         </div>
         <div className="md:col-span-4">
           <Card title={t('performance.title')} tone="accent">
-            <p className="text-sm font-medium opacity-70">{t('performance.comingSoon')}</p>
+            <p className="text-sm font-medium opacity-75">{t('performance.comingSoon')}</p>
           </Card>
         </div>
       </div>

@@ -11,7 +11,7 @@ export function WorkspaceTabs() {
   const pathname = usePathname() ?? ''
   const current = platformFromPath(pathname)
 
-  const items = PLATFORMS.map((p) => ({ href: `/${p}`, label: t(p), active: pathname === `/${p}` }))
+  const items = PLATFORMS.map((p) => ({ href: `/${p}`, label: t(p), active: current === p }))
   if (current) {
     items.push({
       href: `/${current}/settings`,

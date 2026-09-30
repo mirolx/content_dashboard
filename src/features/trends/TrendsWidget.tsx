@@ -55,7 +55,7 @@ export function TrendsWidget({
   if (result.status === 'no-sources') {
     return (
       <Card tone="cream" title={t('title')}>
-        <p className="text-sm opacity-60">
+        <p className="text-sm opacity-75">
           {t('noSources')}{' '}
           <Link href="/youtube/settings" className="underline underline-offset-2">
             {t('goToSettings')}
@@ -84,7 +84,7 @@ export function TrendsWidget({
           <a href={url} target="_blank" rel="noreferrer" className="line-clamp-2 text-sm font-semibold hover:underline">
             {topic.title}
           </a>
-          <p className="text-xs opacity-60">
+          <p className="text-xs opacity-75">
             {topic.channel_title} · {t('views', { count: topic.view_count })}
           </p>
           {topic.matched_keywords.length > 0 && (
@@ -125,12 +125,12 @@ export function TrendsWidget({
       )}
 
       {groups.length === 0 ? (
-        <p className="text-sm opacity-60">{t('empty')}</p>
+        <p className="text-sm opacity-75">{t('empty')}</p>
       ) : (
         <div className="flex flex-col gap-4">
           {groups.map((group) => (
             <section key={group.key}>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-60">{group.title}</h4>
+              <h4 className="mb-2 text-xs font-semibold uppercase tracking-widest opacity-75">{group.title}</h4>
               <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">{group.items.map(renderTopic)}</ul>
             </section>
           ))}

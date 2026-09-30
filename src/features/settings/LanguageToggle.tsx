@@ -32,7 +32,7 @@ export function LanguageToggle() {
             })
           }
           data-magnetic
-          className={`${pillClass(l === locale)} ${l === locale ? '' : '!border-ink/30 !text-ink'}`}
+          className={`${pillClass(l === locale, 'light')}`}
         >
           {LABELS[l]}
         </button>

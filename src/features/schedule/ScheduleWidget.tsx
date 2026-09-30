@@ -89,17 +89,17 @@ export function ScheduleWidget({ initial }: { initial: ScheduleItem[] }) {
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm opacity-60">{t('empty')}</p>
+        <p className="text-sm opacity-75">{t('empty')}</p>
       ) : (
         <ul className="flex flex-col gap-1.5">
           {rows.map((row) => (
-            <li key={row.id} className={`flex items-center gap-2 ${row.is_done ? 'opacity-50' : ''}`}>
+            <li key={row.id} className={`flex flex-wrap items-center gap-2 ${row.is_done ? 'opacity-75' : ''}`}>
               <input
                 type="checkbox"
                 aria-label={tc('done')}
                 checked={row.is_done}
                 onChange={(e) => void update(row, { is_done: e.target.checked })}
-                className="h-4 w-4 accent-[var(--accent)]"
+                className="h-4 w-4 accent-accent"
               />
               <Tag>{t(`kinds.${row.kind}`)}</Tag>
               <span className="shrink-0 text-xs font-semibold opacity-70">
@@ -112,7 +112,7 @@ export function ScheduleWidget({ initial }: { initial: ScheduleItem[] }) {
                 label={t('titleLabel')}
                 value={row.title}
                 onSave={(v) => update(row, { title: v })}
-                className="flex-1"
+                className="min-w-[8rem] flex-1"
               />
               <Button
                 variant="danger"

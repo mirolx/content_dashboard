@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+/* 플랫폼별 포인트 색. PlatformScope가 data-platform을 단다. */
+:root {
+  --accent: #d4a5a5;
+}
+[data-platform="instagram"] {
+  --accent: #b5a5d4;
+}
+
+@theme {
+  --color-ink: #1c1818;
+  --color-panel: #262020;
+  --color-line: #3a3131;
+  --color-cream: #f6efeb;
+  --color-muted: #a89a96;
+  --color-danger: #e07a6f;
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* inline: 유틸리티가 var(--accent)를 직접 참조해야 data-platform 아래에서 값이 바뀐다. */
+@theme inline {
+  --color-accent: var(--accent);
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: var(--color-cream);
+}

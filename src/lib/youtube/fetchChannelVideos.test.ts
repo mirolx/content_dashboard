@@ -74,4 +74,26 @@ describe('fetchChannelVideos', () => {
     })
     expect(result.map((v) => v.videoId)).toEqual(['onNiche2', 'onNiche1'])
   })
+
+  it('ranks videos matching boosted keywords first without changing relevance', async () => {
+    const yt = fakeYouTube({
+      playlists: { UUa: ['a1'], UUb: ['b1'] },
+      videos: [
+        rawVideo('a1', { views: '100', channelId: 'UCa', title: 'glow up diaries' }),
+        rawVideo('b1', { views: '10', channelId: 'UCb', title: 'storytelling time' }),
+      ],
+    })
+    const result = await fetchChannelVideos({
+      apiKey: 'k',
+      playlistIds: ['UUa', 'UUb'],
+      pool: ['glow up', 'mindset', 'storytelling'],
+      boost: ['storytelling'],
+      now,
+      fetchImpl: asFetch(yt),
+    })
+    expect(result.map((v) => [v.videoId, v.relevance])).toEqual([
+      ['b1', 2],
+      ['a1', 2],
+    ])
+  })
 })

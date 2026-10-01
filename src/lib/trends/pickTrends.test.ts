@@ -50,7 +50,7 @@ describe('pickTrends', () => {
   })
 })
 
-const m = (id: string, matched: string[]) => ({ ...v(id), matched })
+const m = (id: string, matched: string[], relevance = 4) => ({ ...v(id), matched, relevance })
 const groups: Record<string, string> = { 'living alone': 'solo', alone: 'solo', storytelling: 'story', 'glow up': 'growth' }
 const groupOf = (k: string) => groups[k] ?? k
 
@@ -64,6 +64,11 @@ describe('diverseOrder', () => {
     const list = [m('a', ['living alone']), m('z', []), m('b', ['alone']), m('c', ['storytelling'])]
     expect(diverseOrder(list, groupOf).map((x) => x.videoId)).toEqual(['a', 'c', 'z', 'b'])
   })
+
+  it('does not promote videos below minRelevance', () => {
+    const list = [m('a', ['living alone'], 6), m('b', ['alone'], 5), m('y', ['2026'], 2), m('c', ['storytelling'], 3)]
+    expect(diverseOrder(list, groupOf, 3).map((x) => x.videoId)).toEqual(['a', 'c', 'b', 'y'])
+  })
 })
 
 describe('pickTrends with groupOf', () => {
@@ -71,5 +76,11 @@ describe('pickTrends with groupOf', () => {
     const channel = [m('c0', ['living alone']), m('c1', ['alone']), m('c2', ['living alone']), m('c3', ['storytelling'])]
     const result = pickTrends(channel, [], { groupOf, perSource: 2, total: 3 })
     expect(ids(result)).toEqual(['c:c0', 'c:c3', 'c:c1'])
+  })
+
+  it('keeps single-keyword videos behind better matches', () => {
+    const keyword = [m('k0', ['living alone'], 6), m('k1', ['alone'], 5), m('k2', ['2026'], 2)]
+    const result = pickTrends([], keyword, { groupOf, perSource: 2, total: 2 })
+    expect(ids(result)).toEqual(['k:k0', 'k:k1'])
   })
 })

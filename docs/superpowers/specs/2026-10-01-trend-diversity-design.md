@@ -65,3 +65,10 @@
 - `pickTrends`: 같은 그룹 영상은 뒤로 밀림, 다양한 그룹이 모자라면 미뤄 둔 영상으로 채움, `groupOf` 없으면 기존 동작.
 - 제외 로직은 순수 함수 `excludeVideos(channel, keyword, exclude)`(`src/lib/trends/excludeVideos.ts`)로 분리해 테스트: 제외 적용, 모두 비면 원래 목록 반환.
 - 기존 테스트, typecheck, lint, build 통과.
+
+## 6. 브라우저 확인 후 보정 (2026-10-01)
+
+실제 데이터에서 다양성 우선 때문에 키워드 하나만 맞은 영상(예: `2026`만 맞은 MTV 영상)이 앞당겨지는 문제가 보여 보정했다.
+
+- `diverseOrder`는 관련도 3 이상(`MIN_PROMOTE_RELEVANCE`, 키워드 2개 이상 매칭)인 영상만 새 주제로 앞당긴다. 나머지는 원래 순서대로 뒤에서 빈자리를 채운다.
+- `fetchChannelVideos`는 키워드가 하나라도 맞는 영상이 있으면 하나도 안 맞는 영상(관련도 0)을 뺀다. 모두 안 맞을 때만 그대로 둔다.

@@ -96,4 +96,37 @@ describe('fetchChannelVideos', () => {
       ['a1', 2],
     ])
   })
+
+  it('drops videos matching no keyword when some do match', async () => {
+    const yt = fakeYouTube({
+      playlists: { UUa: ['hit', 'miss'] },
+      videos: [
+        rawVideo('hit', { views: '1', channelId: 'UCa', title: 'storytelling time' }),
+        rawVideo('miss', { views: '999', channelId: 'UCa', title: 'convenience store food' }),
+      ],
+    })
+    const result = await fetchChannelVideos({
+      apiKey: 'k',
+      playlistIds: ['UUa'],
+      pool: ['storytelling'],
+      now,
+      fetchImpl: asFetch(yt),
+    })
+    expect(result.map((v) => v.videoId)).toEqual(['hit'])
+  })
+
+  it('keeps unmatched videos when nothing matches', async () => {
+    const yt = fakeYouTube({
+      playlists: { UUa: ['miss'] },
+      videos: [rawVideo('miss', { views: '999', channelId: 'UCa', title: 'convenience store food' })],
+    })
+    const result = await fetchChannelVideos({
+      apiKey: 'k',
+      playlistIds: ['UUa'],
+      pool: ['storytelling'],
+      now,
+      fetchImpl: asFetch(yt),
+    })
+    expect(result.map((v) => v.videoId)).toEqual(['miss'])
+  })
 })

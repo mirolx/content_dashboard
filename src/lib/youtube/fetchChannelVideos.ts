@@ -61,7 +61,12 @@ export async function fetchChannelVideos({
   const boosted = new Set(boost.map((k) => k.trim().toLowerCase()))
   const sortScore = (v: ScoredVideo) =>
     v.relevance + BOOST_POINTS * v.matched.filter((k) => boosted.has(k.trim().toLowerCase())).length
-  const videos = scoreAll(recent, pool).sort((a, b) => sortScore(b) - sortScore(a) || b.viewCount - a.viewCount)
+  const scored = scoreAll(recent, pool)
+  // 키워드가 하나라도 맞는 영상이 있으면 하나도 안 맞는 영상은 뺀다 (모두 안 맞으면 그대로 둔다).
+  const relevant = scored.filter((v) => v.relevance > 0)
+  const videos = (relevant.length > 0 ? relevant : scored).sort(
+    (a, b) => sortScore(b) - sortScore(a) || b.viewCount - a.viewCount,
+  )
 
   const perChannel = new Map<string, number>()
   return videos.filter((v) => {

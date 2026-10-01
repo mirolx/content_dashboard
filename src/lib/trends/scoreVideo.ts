@@ -15,18 +15,28 @@ function containsPhrase(text: string, phrase: string) {
   return new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRegExp(phrase)}($|[^\\p{L}\\p{N}])`, 'u').test(text)
 }
 
-/** 풀 키워드가 제목(2점)·태그/설명(1점)에 몇 개 들어 있는지 센다. matched는 제목 매칭이 먼저. */
+/**
+ * 풀 키워드가 제목(2점)·태그/설명(1점)에 몇 개 들어 있는지 센다. matched는 제목 매칭이 먼저.
+ * 다른 매칭 키워드 안에 들어 있는 키워드(alone ⊂ living alone)는 빼서 같은 뜻을 두 번 세지 않는다.
+ * 단, 제목 매칭은 태그/설명에서만 맞은 더 긴 키워드 때문에 빠지지 않는다.
+ */
 export function scoreVideo(video: Scorable, pool: string[]): { relevance: number; matched: string[] } {
   const title = video.title.toLowerCase()
   const rest = [...video.tags, video.description].join('\n').toLowerCase()
-  const inTitle: string[] = []
-  const inRest: string[] = []
+  const seen = new Set<string>()
+  const hits: { keyword: string; phrase: string; inTitle: boolean }[] = []
   for (const keyword of pool) {
     const phrase = keyword.trim().toLowerCase()
-    if (!phrase) continue
-    if (containsPhrase(title, phrase)) inTitle.push(keyword)
-    else if (containsPhrase(rest, phrase)) inRest.push(keyword)
+    if (!phrase || seen.has(phrase)) continue
+    seen.add(phrase)
+    if (containsPhrase(title, phrase)) hits.push({ keyword, phrase, inTitle: true })
+    else if (containsPhrase(rest, phrase)) hits.push({ keyword, phrase, inTitle: false })
   }
+  const kept = hits.filter(
+    (h) => !hits.some((o) => o !== h && (o.inTitle || !h.inTitle) && containsPhrase(o.phrase, h.phrase)),
+  )
+  const inTitle = kept.filter((h) => h.inTitle).map((h) => h.keyword)
+  const inRest = kept.filter((h) => !h.inTitle).map((h) => h.keyword)
   return {
     relevance: inTitle.length * TITLE_POINTS + inRest.length * OTHER_POINTS,
     matched: [...inTitle, ...inRest],

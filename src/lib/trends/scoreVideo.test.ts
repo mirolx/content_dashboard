@@ -33,6 +33,36 @@ describe('scoreVideo', () => {
     ])
   })
 
+  it('counts only the longest of nested keywords', () => {
+    expect(
+      scoreVideo(video('Living Alone Diaries | cozy week'), ['alone', 'living alone', 'living alone diaries']),
+    ).toEqual({ relevance: 2, matched: ['living alone diaries'] })
+  })
+
+  it('keeps a title match even if a longer keyword only matches the description', () => {
+    expect(
+      scoreVideo(video('living alone at 25', [], 'living alone diaries ep 3'), ['living alone', 'living alone diaries']),
+    ).toEqual({ relevance: 3, matched: ['living alone', 'living alone diaries'] })
+  })
+
+  it('drops a nested keyword that also matched the title on its own', () => {
+    expect(scoreVideo(video('living alone diaries', [], 'alone again'), ['alone', 'living alone diaries'])).toEqual({
+      relevance: 2,
+      matched: ['living alone diaries'],
+    })
+  })
+
+  it('counts keywords that only differ in case once', () => {
+    expect(scoreVideo(video('mindset reset'), ['mindset', 'Mindset'])).toEqual({ relevance: 2, matched: ['mindset'] })
+  })
+
+  it('still counts keywords that are not nested', () => {
+    expect(scoreVideo(video('living alone but not lonely'), ['living alone', 'lonely'])).toEqual({
+      relevance: 4,
+      matched: ['living alone', 'lonely'],
+    })
+  })
+
   it('matches whole phrases only', () => {
     expect(scoreVideo(video('glowing up slowly'), ['glow up']).relevance).toBe(0)
     expect(scoreVideo(video('selfcare sunday'), ['self care']).relevance).toBe(0)

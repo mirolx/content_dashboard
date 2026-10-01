@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { VideoDetail } from '@/lib/youtube/api'
-import { pickTrends } from './pickTrends'
+import { diverseOrder, pickTrends } from './pickTrends'
 
 const v = (id: string): VideoDetail => ({
   videoId: id,
@@ -47,5 +47,29 @@ describe('pickTrends', () => {
   it('drops a keyword duplicate only when the channel copy is actually picked', () => {
     const result = pickTrends([...many('c', 5), v('shared')], [v('shared'), ...many('k', 5)])
     expect(ids(result)).toEqual(['c:c0', 'c:c1', 'c:c2', 'c:c3', 'k:shared', 'k:k0', 'k:k1', 'k:k2'])
+  })
+})
+
+const m = (id: string, matched: string[]) => ({ ...v(id), matched })
+const groups: Record<string, string> = { 'living alone': 'solo', alone: 'solo', storytelling: 'story', 'glow up': 'growth' }
+const groupOf = (k: string) => groups[k] ?? k
+
+describe('diverseOrder', () => {
+  it('moves videos whose top group already appeared to the back', () => {
+    const list = [m('a', ['living alone']), m('b', ['alone']), m('c', ['storytelling']), m('d', ['glow up'])]
+    expect(diverseOrder(list, groupOf).map((x) => x.videoId)).toEqual(['a', 'c', 'd', 'b'])
+  })
+
+  it('puts videos without matches after the varied ones, keeping order', () => {
+    const list = [m('a', ['living alone']), m('z', []), m('b', ['alone']), m('c', ['storytelling'])]
+    expect(diverseOrder(list, groupOf).map((x) => x.videoId)).toEqual(['a', 'c', 'z', 'b'])
+  })
+})
+
+describe('pickTrends with groupOf', () => {
+  it('prefers different groups and fills with the rest when short', () => {
+    const channel = [m('c0', ['living alone']), m('c1', ['alone']), m('c2', ['living alone']), m('c3', ['storytelling'])]
+    const result = pickTrends(channel, [], { groupOf, perSource: 2, total: 3 })
+    expect(ids(result)).toEqual(['c:c0', 'c:c3', 'c:c1'])
   })
 })

@@ -5,6 +5,7 @@ import type { TrendTopic } from '@/lib/types'
 import { fetchChannelVideos } from '@/lib/youtube/fetchChannelVideos'
 import { fetchKeywordVideos } from '@/lib/youtube/fetchKeywordVideos'
 import { buildOrQueries } from './buildOrQueries'
+import { excludeVideos } from './excludeVideos'
 import { pickRotation, type RotationKeyword } from './pickRotation'
 import { pickTrends } from './pickTrends'
 
@@ -20,12 +21,18 @@ const KEYWORDS_PER_GROUP = 4
 const MAX_POOL = 100
 /** 서버 액션이 등록을 10개로 막지만, 직접 insert로 우회될 수 있어 조회에서도 제한한다. */
 const MAX_CHANNELS = 10
+/** 이 기간(오늘 제외) 안에 추천한 영상은 다시 추천하지 않는다. */
+const RECENT_DAYS = 7
 
 /**
  * 오늘(한국 시간) 저장된 트렌드가 있으면 그대로, 없으면 로테이션으로 고른 키워드와 벤치마킹 채널로
  * YouTube에서 가져와 관련도 점수와 함께 저장한다. 실패하면 저장하지 않고 가장 최근 날짜의 트렌드를 돌려준다.
+ * 최근 7일과 `exclude`의 영상은 후보에서 뺀다.
  */
-export async function getTodayTrends(workspaceId: string): Promise<TrendsResult> {
+export async function getTodayTrends(
+  workspaceId: string,
+  { exclude = [] }: { exclude?: string[] } = {},
+): Promise<TrendsResult> {
   await requireUser()
   const supabase = await createClient()
   const today = seoulDateString(new Date())
@@ -60,7 +67,7 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
     return { status: 'ok', topics: existing.data as TrendTopic[] }
   }
 
-  const [keywordRes, channelRes] = await Promise.all([
+  const [keywordRes, channelRes, recentRes] = await Promise.all([
     supabase
       .from('trend_keywords')
       .select('id, keyword, group_name, last_searched_on, created_at')
@@ -73,6 +80,12 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
       .eq('workspace_id', workspaceId)
       .order('created_at')
       .limit(MAX_CHANNELS),
+    supabase
+      .from('trend_topics')
+      .select('video_id')
+      .eq('workspace_id', workspaceId)
+      .gte('fetched_on', seoulDateString(new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000)))
+      .lt('fetched_on', today),
   ])
   if (keywordRes.error || channelRes.error) return fallback()
   const keywordRows = (keywordRes.data ?? []) as RotationKeyword[]
@@ -80,6 +93,10 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
   if (keywordRows.length === 0 && playlistIds.length === 0) return { status: 'no-sources' }
 
   const pool = keywordRows.map((k) => k.keyword)
+  // 최근 기록 조회가 실패해도 추천은 막지 않는다.
+  const recentIds = recentRes.error ? [] : (recentRes.data ?? []).map((r) => r.video_id as string)
+  const groupByKeyword = new Map(keywordRows.map((k) => [k.keyword.trim().toLowerCase(), k.group_name ?? k.keyword]))
+  const groupOf = (keyword: string) => groupByKeyword.get(keyword.trim().toLowerCase()) ?? keyword
   const rotation = pickRotation(keywordRows, { groups: ROTATION_GROUPS, perGroup: KEYWORDS_PER_GROUP })
   const queries = buildOrQueries(rotation)
 
@@ -89,10 +106,11 @@ export async function getTodayTrends(workspaceId: string): Promise<TrendsResult>
 
     const now = new Date()
     const [channelVideos, keywordVideos] = await Promise.all([
-      fetchChannelVideos({ apiKey, playlistIds, pool, now }),
+      fetchChannelVideos({ apiKey, playlistIds, pool, boost: rotation.map((k) => k.keyword), now }),
       fetchKeywordVideos({ apiKey, queries, pool, now }),
     ])
-    const picked = pickTrends(channelVideos, keywordVideos)
+    const fresh = excludeVideos(channelVideos, keywordVideos, [...exclude, ...recentIds])
+    const picked = pickTrends(fresh.channel, fresh.keyword, { groupOf })
 
     if (picked.length > 0) {
       const { error } = await supabase.from('trend_topics').upsert(

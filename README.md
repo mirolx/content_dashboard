@@ -35,6 +35,7 @@
   - 📺 **벤치마킹 채널** — 등록한 채널의 최근 30일 인기 영상 (채널당 최대 2개)
   - 🔍 **키워드 추천** — 그룹별 키워드 풀(최대 100개)을 매일 로테이션해 OR 검색
   - 제목·태그·설명에 겹치는 키워드 수로 **관련도 순위**를 매기고, 맞은 키워드를 태그로 표시
+  - 겹치는 키워드(alone ⊂ living alone)는 한 번만 세고, 한 화면에 여러 주제를 섞고, 최근 7일 안에 추천한 영상은 다시 추천하지 않음 ("다시 가져오기"를 누를 때마다 새 영상)
   - 3분 이하 숏츠와 니치 밖 카테고리는 제외, 마음에 드는 영상은 아이디어로 **고정**
 - **고정된 아이디어 · 레퍼런스 · 해시태그 뱅크 · 빠른 메모**
 
@@ -109,7 +110,7 @@
 | 백엔드 | Supabase — Postgres + RLS, Auth, Realtime |
 | 외부 API | YouTube Data API v3 |
 | 기타 | next-intl (ko/en), zod, gsap (마그네틱 커서) |
-| 테스트 | Vitest (138개) |
+| 테스트 | Vitest (149개) |
 | 배포 | Vercel |
 
 ## 시작하기
@@ -252,6 +253,7 @@ Screenshots are at the [top of this page](#크리에이터-대시보드).
   - 📺 **Benchmark channels** — the most-viewed videos from your chosen channels in the last 30 days (max 2 per channel)
   - 🔍 **Keyword picks** — a grouped keyword pool (up to 100) rotated daily into OR searches
   - Ranked by **relevance** (how many of your keywords appear in the title, tags, and description), with the matched keywords shown as tags
+  - Overlapping keywords (alone ⊂ living alone) count once, topics are mixed on each screen, and videos picked in the last 7 days are skipped (every "fetch again" brings new videos)
   - Shorts (3 minutes or less) and off-niche categories are skipped; pin any video as an idea
 - **Pinned ideas · References · Hashtag bank · Quick notes**
 
@@ -325,7 +327,7 @@ Rebuilt from the [Fluid Magnetic Cursor on 21st.dev](https://21st.dev/@jahed/com
 | Backend | Supabase — Postgres + RLS, Auth, Realtime |
 | External API | YouTube Data API v3 |
 | Other | next-intl (ko/en), zod, gsap (magnetic cursor) |
-| Tests | Vitest (138) |
+| Tests | Vitest (149) |
 | Hosting | Vercel |
 
 ## Getting started
